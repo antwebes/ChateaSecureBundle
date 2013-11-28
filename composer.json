@@ -13,7 +13,6 @@
 	"homepage" : "https://github.com/antwebes/ChateaSecureBundle",
 	"license" : "MIT",
 	"require" : {
-        "antwebes/chatea-common": "dev-master",
 		"antwebes/chatea-client-lib" : "dev-master"
 	},
     "require-dev": {
