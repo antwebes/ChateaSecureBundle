@@ -13,7 +13,7 @@
 	"homepage" : "https://github.com/antwebes/ChateaSecureBundle",
 	"license" : "MIT",
 	"require" : {
-		"antwebes/chatea-client-lib" : "dev-master"
+		"antwebes/chatea-client-lib" : "0.1"
 	},
     "require-dev": {
         "raulfraile/ladybug": "~1.0"
