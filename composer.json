@@ -15,7 +15,7 @@
 		"antwebes/chatea-client-lib": "0.1"
 	},
     "require-dev": {
-        "raulfraile/ladybug": "~1.0"
+        "raulfraile/ladybug": "dev-master"
     },
     "autoload": {
         "psr-0": { "Ant\\Bundle\\ChateaSecureBundle": "" }
