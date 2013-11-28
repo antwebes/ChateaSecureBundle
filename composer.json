@@ -1,7 +1,6 @@
 {
 	"name" : "antwebes/chatea-secure-bundle",
 	"description" : "Symfony2 bundle for ChateaClient library, It makes it easy to use API of api.chatea.net",
-    "version" : "0.1.0",
 	"type" : "symfony-bundle",
     "authors" : [{
         "name" : "José Ramón Fernandez Leis",
@@ -13,7 +12,7 @@
 	"homepage" : "https://github.com/antwebes/ChateaSecureBundle",
 	"license" : "MIT",
 	"require" : {
-		"antwebes/chatea-client-lib" : "0.1"
+		"antwebes/chatea-client-lib" : "dev-master"
 	},
     "require-dev": {
         "raulfraile/ladybug": "~1.0"
