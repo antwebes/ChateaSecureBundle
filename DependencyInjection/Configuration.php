@@ -20,6 +20,16 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('chatea_secure');
 
+        $rootNode
+            ->children()
+                ->arrayNode('app_auth')
+                    ->children()
+                        ->scalarNode('enviroment')->end()
+                        ->scalarNode('client_id')->end()
+                        ->scalarNode('secret')->end()
+                    ->end()
+            ->end();
+
         // Here you should define the parameters that are allowed to
         // configure your bundle. See the documentation linked above for
         // more information on that topic.
