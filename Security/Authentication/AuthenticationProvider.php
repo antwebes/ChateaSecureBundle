@@ -58,6 +58,6 @@ class AuthenticationProvider extends UserAuthenticationProvider
      */
     protected function checkAuthentication(UserInterface $user, UsernamePasswordToken $token)
     {
-        throw new AuthenticationException("This method is not supported yet.");
+        //throw new AuthenticationException("This method is not supported yet.");
     }
 }
