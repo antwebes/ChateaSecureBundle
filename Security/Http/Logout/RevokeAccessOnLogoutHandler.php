@@ -1,6 +1,7 @@
 <?php
 namespace Ant\Bundle\ChateaSecureBundle\Security\Http\Logout;
 
+use Ant\Bundle\ChateaSecureBundle\Client\HttpAdapter\HttpAdapterInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -9,12 +10,12 @@ use Symfony\Component\Security\Core\SecurityContextInterface;
 use Ant\ChateaClient\Service\Client\ChateaGratisAppClient;
 use Ant\Bundle\ChateaSecureBundle\Security\User\User;
 
-class RevokeAccessOnLogoutHanler implements LogoutHandlerInterface
+class RevokeAccessOnLogoutHandler implements LogoutHandlerInterface
 {
     private $securityContext;
     private $client;
 
-    function __construct(SecurityContextInterface $securityContext, ChateaGratisAppClient $client)
+    function __construct(SecurityContextInterface $securityContext, HttpAdapterInterface $client)
     {
         $this->securityContext = $securityContext;
         $this->client = $client;
@@ -47,8 +48,7 @@ class RevokeAccessOnLogoutHanler implements LogoutHandlerInterface
     {
         try {
             $user = $token->getUser();
-            $this->client->updateAccessToken($user->getAccessToken());
-            $this->client->revokeToken();
+            $this->client->revokeToken($user->getAccessToken());
         }catch(\Exception $e){
 
         }

@@ -7,47 +7,22 @@
     <parameters>
         <parameter key="antwebs_chateasecure_user_provider.class">Ant\Bundle\ChateaSecureBundle\Security\User\UserProvider</parameter>
         <parameter key="antwebs_chateasecure_authentication_provider.class">Ant\Bundle\ChateaSecureBundle\Security\Authentication\AuthenticationProvider</parameter>
-        <parameter key="antwebs_chateasecure_authentication.class">Ant\ChateaClient\Client\Authentication</parameter>
-        <parameter key="antwewebs_revoke_access_on_logout_handler.class">Ant\Bundle\ChateaSecureBundle\Security\Http\Logout\RevokeAccessOnLogoutHanler</parameter>
+        <parameter key="antwebs_chateasecure.guzzle_adapter.default.class">Ant\Bundle\ChateaSecureBundle\Client\HttpAdapter\GuzzleHttpAdapter</parameter>
 
-        <parameter key="antwebs_chateasecure.client.class">Guzzle\Service\Client</parameter>
-        <parameter key="antwebs_chateasecure.factory_client_auth.class">Ant\ChateaClient\Service\Client\ChateaOAuth2Client</parameter>
-        <parameter key="antwebs_chateasecure.factory_client_app.class">Ant\ChateaClient\Service\Client\ChateaGratisAppClient</parameter>
+        <parameter key="antwewebs_revoke_access_on_logout_handler.class">Ant\Bundle\ChateaSecureBundle\Security\Http\Logout\RevokeAccessOnLogoutHandler</parameter>
+
     </parameters>
 
     <services>
-        <service id="antwebs_chateasecure.client"
-                 class="%antwebs_chateasecure.client.class%"
-                 factory-class="%antwebs_chateasecure.factory_client_app.class%"
-                 factory-method="factory"
-                 public="false">
-            <argument type="collection">
-                <argument key="client_id">%chatea_secure.app_auth.client_id%</argument>
-                <argument key="secret">%chatea_secure.app_auth.secret%</argument>
-                <argument key="environment">%chatea_secure.app_auth.enviroment%</argument>
-            </argument>
-        </service>
+        <service id="chat_secure.adapter" alias="antwebs_chateasecure.guzzle_adapter" synthetic="true"/>
 
-        <service id="antwebs_chateasecure.client_auth"
-                 class="%antwebs_chateasecure.client.class%"
-                 factory-class="%antwebs_chateasecure.factory_client_auth.class%"
-                 factory-method="factory"
-                 public="false">
-            <argument type="collection">
-                <argument key="environment">%chatea_secure.app_auth.enviroment%</argument>
-                <argument key="client_id">%chatea_secure.app_auth.client_id%</argument>
-                <argument key="secret">%chatea_secure.app_auth.secret%</argument>
-            </argument>
-        </service>
-
-        <service id="antwebs_chateasecure_authentication" class="%antwebs_chateasecure_authentication.class%">
-            <argument type="service" id="antwebs_chateasecure.client_auth" />
-            <argument type="string">%chatea_secure.app_auth.client_id%</argument>
-            <argument type="string">%chatea_secure.app_auth.secret%</argument>
+        <service id="antwebs_chateasecure.guzzle_adapter" class="%antwebs_chateasecure.guzzle_adapter.default.class%" public="false">
+            <argument key="client_id">%chatea_secure.app_auth.client_id%</argument>
+            <argument key="secret">%chatea_secure.app_auth.secret%</argument>
         </service>
 
         <service id="antwebs_chateasecure_user_provider" class="%antwebs_chateasecure_user_provider.class%" >
-            <argument type="service" id="antwebs_chateasecure_authentication" />
+            <argument type="service" id="chat_secure.adapter" />
         </service>
 
         <service id="security.authentication_provider.antwebs_chateasecure" class="%antwebs_chateasecure_authentication_provider.class%" abstract="true" public="false">
@@ -60,7 +35,7 @@
 
         <service id="antwewebs_revoke_access_on_logout_handler" class="%antwewebs_revoke_access_on_logout_handler.class%">
           <argument type="service" id="security.context" />
-          <argument type="service" id="antwebs_chateasecure.client" />
+          <argument type="service" id="chat_secure.adapter" />
         </service>
     </services>
 </container>

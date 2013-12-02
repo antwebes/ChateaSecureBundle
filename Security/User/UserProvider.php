@@ -1,6 +1,7 @@
 <?php
 namespace Ant\Bundle\ChateaSecureBundle\Security\User;
 
+use Ant\Bundle\ChateaSecureBundle\Client\HttpAdapter\HttpAdapterInterface;
 use Ant\ChateaClient\Client\Authentication;
 use Ant\ChateaClient\Service\Client\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\AuthenticationException as SymfonyAuthenticationException;
@@ -12,7 +13,7 @@ class UserProvider implements ChateaUserProviderInterface
 {
     private $authentication;
 
-    public function __construct(Authentication $authentication)
+    public function __construct(HttpAdapterInterface $authentication)
     {
         $this->authentication = $authentication;
     }
@@ -47,13 +48,14 @@ class UserProvider implements ChateaUserProviderInterface
      *
      * @see UsernameNotFoundException
      *
-     * @throws UsernameNotFoundException if the user is not found
+     * @throws \Exception if the user is not found
      *
      */
     public function loadUserByUsername($username)
     {
         throw new \Exception("this method is not soported");
     }
+
 
     /**
      * Refreshes the user for the account interface.
@@ -62,11 +64,14 @@ class UserProvider implements ChateaUserProviderInterface
      * totally reloaded (e.g. from the database), or if the UserInterface
      * object can just be merged into some internal array of users / identity
      * map.
+     *
      * @param UserInterface $user
      *
      * @return UserInterface
      *
-     * @throws UnsupportedUserException if the account is not supported
+     * @throws \Symfony\Component\Security\Core\Exception\UsernameNotFoundException
+     *
+     * @throws \Symfony\Component\Security\Core\Exception\UnsupportedUserException if the account is not supported
      */
     public function refreshUser(UserInterface $user)
     {
@@ -77,14 +82,14 @@ class UserProvider implements ChateaUserProviderInterface
         }
 
         if(!$user->isCredentialsNonExpired()){
-            $refresToken = $user->getRefreshToken();
+            $refreshToken = $user->getRefreshToken();
             
-            if(empty($refresToken)){
+            if(empty($refreshToken)){
                 throw new UsernameNotFoundException(sprintf('Incorrect username or password for %s ', $user->getUsername()),30,null);
             }
 
             try {
-                $data = $this->authentication->withRefreshToken($refresToken);
+                $data = $this->authentication->withRefreshToken($refreshToken);
                 $user->setAccessToken($data['access_token']);
                 $user->setRefreshToken($data['refresh_token']);
                 $user->setExpiresIn($data['expires_in']);

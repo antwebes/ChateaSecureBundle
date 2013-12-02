@@ -15,12 +15,10 @@ class AuthenticationProvider extends UserAuthenticationProvider
     /**
      * Constructor.
      *
-     * @param ChateaUserProviderInterface $userprovider               An ChateaUserProviderInterface
+     * @param ChateaUserProviderInterface $userProvider               An ChateaUserProviderInterface
      * @param UserCheckerInterface        $userChecker                An UserCheckerInterface interface
      * @param string                      $providerKey                A provider key
-     * @param Boolean                     $hideUserNotFoundExceptions Whether to hide user not found exception or not
-     *
-     * @throws \InvalidArgumentException
+     * @param bool                     $hideUserNotFoundExceptions Whether to hide user not found exception or not
      */
     public function __construct(ChateaUserProviderInterface $userProvider, UserCheckerInterface $userChecker, $providerKey, $hideUserNotFoundExceptions = true)
     {
@@ -60,6 +58,6 @@ class AuthenticationProvider extends UserAuthenticationProvider
      */
     protected function checkAuthentication(UserInterface $user, UsernamePasswordToken $token)
     {
-        // TODO: Implement checkAuthentication() method.
+        throw new AuthenticationException("This method is not supported yet.");
     }
 }
