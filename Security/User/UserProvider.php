@@ -2,9 +2,7 @@
 namespace Ant\Bundle\ChateaSecureBundle\Security\User;
 
 use Ant\Bundle\ChateaSecureBundle\Client\HttpAdapter\HttpAdapterInterface;
-use Ant\ChateaClient\Client\Authentication;
-use Ant\ChateaClient\Service\Client\AuthenticationException;
-use Symfony\Component\Security\Core\Exception\AuthenticationException as SymfonyAuthenticationException;
+use Ant\Bundle\ChateaSecureBundle\Client\HttpAdapter\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
