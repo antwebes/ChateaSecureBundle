@@ -1,7 +1,7 @@
 <?php
 namespace Ant\Bundle\ChateaSecureBundle\Tests\Security\Http\Logout;
 
-use Ant\Bundle\ChateaSecureBundle\Security\Http\Logout\RevokeAccessOnLogoutHanler;
+use Ant\Bundle\ChateaSecureBundle\Security\Http\Logout\RevokeAccessOnLogoutHandler;
 use Symfony\Component\Security\Http\Logout\LogoutHandlerInterface;
 
 class RevokeAccessOnLogoutHanlerTest extends \PHPUnit_Framework_TestCase
@@ -14,11 +14,11 @@ class RevokeAccessOnLogoutHanlerTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->securityContext = $this->getMockForAbstractClass('Symfony\Component\Security\Core\SecurityContextInterface');
-        $this->client = $this->getMockBuilder('Ant\ChateaClient\Service\Client\ChateaGratisAppClient')
+        $this->client = $this->getMockBuilder('Ant\Bundle\ChateaSecureBundle\Client\HttpAdapter\HttpAdapterInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->revokeAccesOnLogoutHanler = new RevokeAccessOnLogoutHanler($this->securityContext, $this->client);
+        $this->revokeAccesOnLogoutHanler = new RevokeAccessOnLogoutHandler($this->securityContext, $this->client);
     }
 
     public function testImplementsLogoutHandlerInterface()
@@ -30,11 +30,8 @@ class RevokeAccessOnLogoutHanlerTest extends \PHPUnit_Framework_TestCase
     {
         $this->client
             ->expects($this->once())
-            ->method('updateAccessToken')
+            ->method('revokeToken')
             ->with($this->accessToken);
-        $this->client
-            ->expects($this->once())
-            ->method('revokeToken');
 
         $user = $this->getAuthenticatedUser();
         $this->configureSecurityToken($user);
@@ -49,7 +46,7 @@ class RevokeAccessOnLogoutHanlerTest extends \PHPUnit_Framework_TestCase
     {
         $this->client
             ->expects($this->never())
-            ->method('updateAccessToken');
+            ->method('revokeToken');
         $this->client
             ->expects($this->never())
             ->method('__call');

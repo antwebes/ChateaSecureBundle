@@ -18,9 +18,10 @@ class AccessTokenBasedRememberMeService extends AbstractRememberMeServices
             throw new AuthenticationException('The cookie is invalid.');
         }
 
-        list($username, $accessToken, $expiresAt) = $cookieParts;
+        list($id, $username, $accessToken, $expiresAt) = $cookieParts;
 
         $authUserData = array(
+                'id' => $id,
                 'access_token' => $accessToken,
                 'refresh_token' => '',
                 'token_type' => '',
@@ -45,6 +46,7 @@ class AccessTokenBasedRememberMeService extends AbstractRememberMeServices
         $user = $token->getUser();
         $expires = time() + $this->options['lifetime'];
         $value = $this->generateCookieValue(
+            $user->getId(),
             $user->getUsername(),
             $user->getAccessToken(),
             $user->getExpiresAt()
@@ -63,9 +65,10 @@ class AccessTokenBasedRememberMeService extends AbstractRememberMeServices
         );
     }
 
-    protected function generateCookieValue($username, $accessToken, $expiresAt)
+    protected function generateCookieValue($id, $username, $accessToken, $expiresAt)
     {
         return $this->encodeCookie(array(
+            $id,
             $username,
             $accessToken,
             $expiresAt
@@ -75,6 +78,7 @@ class AccessTokenBasedRememberMeService extends AbstractRememberMeServices
     protected function mapJsonToUser($data, $username)
     {
         return new User(
+            $data['id'],
             $username,
             $data['access_token'],
             $data['refresh_token'],

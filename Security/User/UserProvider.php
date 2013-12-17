@@ -114,6 +114,7 @@ class UserProvider implements ChateaUserProviderInterface
     protected function mapJsonToUser($data, $username)
     {
         return new User(
+            $data['id'],
             $username,
             $data['access_token'],
             $data['refresh_token'],

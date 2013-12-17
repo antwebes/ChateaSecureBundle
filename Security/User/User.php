@@ -5,6 +5,7 @@ use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
 class User implements AdvancedUserInterface
 {
+    private $id;
     private $username;
     private $accessToken;
     private $refreshToken;
@@ -14,8 +15,9 @@ class User implements AdvancedUserInterface
     private $accountNonLocked;
     private $roles;
 
-    public function __construct($username, $accessToken, $refreshToken, $tokenType = 'Bearer', $expiresIn = 0, array $scopes = array() )
+    public function __construct($id, $username, $accessToken, $refreshToken, $tokenType = 'Bearer', $expiresIn = 0, array $scopes = array() )
     {
+        $this->id = $id;
         $this->username = $username;
         $this->accessToken = $accessToken;
         $this->refreshToken = $refreshToken;
@@ -72,6 +74,11 @@ class User implements AdvancedUserInterface
     public function getSalt()
     {
         return null;
+    }
+
+    public function getId()
+    {
+        return $this->id;
     }
 
     /**

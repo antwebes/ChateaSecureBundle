@@ -12,7 +12,7 @@ class UserProviderTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->authenticator = $this->getMockBuilder('Ant\ChateaClient\Client\Authentication')
+        $this->authenticator = $this->getMockBuilder('Ant\Bundle\ChateaSecureBundle\Client\HttpAdapter\HttpAdapterInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $this->userProvider = new UserProvider($this->authenticator);
@@ -101,6 +101,7 @@ class UserProviderTest extends \PHPUnit_Framework_TestCase
     private function getResponseToken()
     {
         return array(
+                    "id" => 2,
                     "access_token" => "321IUKKL",
                     "expires_in" => 3600,
                     "token_type" => "password",
@@ -111,14 +112,14 @@ class UserProviderTest extends \PHPUnit_Framework_TestCase
 
     private function getExpectedUser($isCredentialsNonExpired = true)
     {
-        return new User('username', '321IUKKL', '12HHIIK', 'password', 3600, array('role_1'));
+        return new User(2, 'username', '321IUKKL', '12HHIIK', 'password', 3600, array('role_1'));
     }
 
     private function getExpectedMockedUser($isCredentialsNonExpired = true)
     {
         $now = time();
         TimeHelper::$time = $now;
-        $user = new User('username', '321IUKKL', '12HHIIK', 'password', 3600, array('role_1'));
+        $user = new User(2, 'username', '321IUKKL', '12HHIIK', 'password', 3600, array('role_1'));
 
         if($isCredentialsNonExpired){
             TimeHelper::$time = $now + 1000;

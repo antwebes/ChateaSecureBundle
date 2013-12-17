@@ -51,7 +51,5 @@ class AuthenticationProviderTest extends \PHPUnit_Framework_TestCase
             ->will($this->throwException(new UsernameNotFoundException(sprintf('Incorrect username or password for %s ', 'usuario1'),30, new \Exception())));
 
         $tokenReturned = $this->authenticationProvider->authenticate($token);
-
-        $user = $tokenReturned->getUser();
     }
 }
