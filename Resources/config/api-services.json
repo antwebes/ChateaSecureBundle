@@ -1,7 +1,6 @@
 {
     "name": "api.chateagratis.net",
     "apiVersion": ["fobos", "1.0.0"],
-    "baseUrl":"http://api.chatsfree.net",
     "_description": "Chatea Gratis Client Auth API",
     "operations": {
         "withUserCredentials":{

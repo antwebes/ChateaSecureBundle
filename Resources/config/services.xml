@@ -17,6 +17,7 @@
         <service id="chat_secure.adapter" alias="antwebs_chateasecure.guzzle_adapter" synthetic="true"/>
 
         <service id="antwebs_chateasecure.guzzle_adapter" class="%antwebs_chateasecure.guzzle_adapter.default.class%" public="false">
+            <argument key="base_url">%chatea_secure.api_endpoint%</argument>
             <argument key="client_id">%chatea_secure.app_auth.client_id%</argument>
             <argument key="secret">%chatea_secure.app_auth.secret%</argument>
         </service>

@@ -38,16 +38,25 @@ class GuzzleHttpAdapter implements HttpAdapterInterface
     private $secret;
 
     /**
+     * @param string $base_url The Server end point
      * @param string $clientId The public key of client
      * @param string $secret The private key of client
      * @param ClientInterface $client Client object
      * @throws InvalidArgumentException This exception is thrown if any parameter has errors
      */
-    public function __construct($clientId, $secret, ClientInterface $client = null)
+    public function __construct($base_url, $clientId, $secret, ClientInterface $client = null)
     {
         if($client == null){
             $client = new Client();
         }
+
+        if (!is_string($base_url) || 0 >= strlen($base_url)){
+            throw new InvalidArgumentException("The field base_url must be a non-empty string");
+        }
+        if(!filter_var($base_url, FILTER_VALIDATE_URL)){
+            throw new InvalidArgumentException("The field base_url in a url not valid ");
+        }
+
         if (!is_string($clientId) || 0 >= strlen($clientId)){
             throw new InvalidArgumentException("The field clientId must be a non-empty string");
         }
@@ -57,6 +66,7 @@ class GuzzleHttpAdapter implements HttpAdapterInterface
         $this->client = null === $client ? new Client() : $client;
         $this->clientId = $clientId;
         $this->secret = $secret;
+        $this->client->setBaseUrl($base_url);
         $this->client->setDescription(ServiceDescription::factory(__DIR__.'./../../Resources/config/api-services.json'));
     }
 

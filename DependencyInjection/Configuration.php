@@ -28,6 +28,8 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('client_id')->end()
                         ->scalarNode('secret')->end()
                     ->end()
+                ->end()
+                ->scalarNode("api_endpoint")->defaultValue('default')->end()
             ->end();
 
         // Here you should define the parameters that are allowed to
