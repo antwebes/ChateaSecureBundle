@@ -58,7 +58,6 @@ class GuzzleHttpAdapter implements HttpAdapterInterface
         $this->clientId = $clientId;
         $this->secret = $secret;
         $this->client->setDescription(ServiceDescription::factory(__DIR__.'./../../Resources/config/api-services.json'));
-
     }
 
 
