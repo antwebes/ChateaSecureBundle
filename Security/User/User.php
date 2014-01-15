@@ -9,26 +9,38 @@ class User implements AdvancedUserInterface
     private $username;
     private $accessToken;
     private $refreshToken;
-    private $tokenType;
+    private $validated;
     private $enabled;
+    private $tokenType;
     private $expired_at;
     private $accountNonLocked;
     private $roles;
 
-    public function __construct($id, $username, $accessToken, $refreshToken, $tokenType = 'Bearer', $expiresIn = 0, array $scopes = array() )
+    /**
+     * 
+     * @param int $id
+     * @param string $username
+     * @param unknown $accessToken
+     * @param unknown $refreshToken
+     * @param bool $validated value enabled in API, this value is the value really if user is enabled or disabled 
+     * @param string $tokenType
+     * @param number $expiresIn
+     * @param array $scopes
+     */
+    public function __construct($id, $username, $accessToken, $refreshToken, $validated, $tokenType = 'Bearer', $expiresIn = 0, array $scopes = array() )
     {
         $this->id = $id;
         $this->username = $username;
         $this->accessToken = $accessToken;
         $this->refreshToken = $refreshToken;
+        $this->validated = $validated;
         $this->tokenType = $tokenType;
 
 
         $this->setExpiresIn($expiresIn);
 
-        $this->enabled = true;
         $this->accountNonLocked = true;
-
+        $this->enabled = true;
 
         $this->roles = array();
         $this->scopes = $scopes;
@@ -156,6 +168,17 @@ class User implements AdvancedUserInterface
     public function isEnabled()
     {
         return $this->enabled;
+    }
+    /**
+     * Checks whether the user validated its mail.
+     *
+     * @return Boolean true if the user is validated, false otherwise
+     *
+     * @see DisabledException
+     */
+    public function isValidated()
+    {
+    	return $this->validated;
     }
 
     /**

@@ -25,7 +25,6 @@ class UserProvider implements ChateaUserProviderInterface
         if(empty($password)) {
             throw new \InvalidArgumentException('The password cannot be empty.');
         }
-
         try {
             $data = $this->authentication->withUserCredentials($username, $password);
             return $this->mapJsonToUser($data, $username);
@@ -118,9 +117,10 @@ class UserProvider implements ChateaUserProviderInterface
             $username,
             $data['access_token'],
             $data['refresh_token'],
+        	$data['enabled'],
             $data['token_type'],
             $data['expires_in'],
-            explode(',', $data['scope'])
+			explode(',', $data['scope'])
         );
     }
 }
