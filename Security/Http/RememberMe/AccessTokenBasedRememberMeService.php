@@ -14,17 +14,18 @@ class AccessTokenBasedRememberMeService extends AbstractRememberMeServices
 {
     protected function processAutoLoginCookie(array $cookieParts, Request $request)
     {
-        if(count($cookieParts) !== 3) {
+        if(count($cookieParts) !== 5) {
             throw new AuthenticationException('The cookie is invalid.');
         }
 
-        list($id, $username, $accessToken, $expiresAt) = $cookieParts;
+        list($id, $username, $accessToken, $expiresAt, $enabled) = $cookieParts;
 
         $authUserData = array(
                 'id' => $id,
                 'access_token' => $accessToken,
                 'refresh_token' => '',
                 'token_type' => '',
+                'enabled' => $enabled,
                 'expires_in' => $expiresAt - time(),
                 'scope' => ''
             );
@@ -49,7 +50,8 @@ class AccessTokenBasedRememberMeService extends AbstractRememberMeServices
             $user->getId(),
             $user->getUsername(),
             $user->getAccessToken(),
-            $user->getExpiresAt()
+            $user->getExpiresAt(),
+            $user->isValidated()
             );
 
         $response->headers->setCookie(
@@ -65,13 +67,14 @@ class AccessTokenBasedRememberMeService extends AbstractRememberMeServices
         );
     }
 
-    protected function generateCookieValue($id, $username, $accessToken, $expiresAt)
+    protected function generateCookieValue($id, $username, $accessToken, $expiresAt, $enabled)
     {
         return $this->encodeCookie(array(
             $id,
             $username,
             $accessToken,
-            $expiresAt
+            $expiresAt,
+            $enabled
         ));
     }
 
@@ -82,6 +85,7 @@ class AccessTokenBasedRememberMeService extends AbstractRememberMeServices
             $username,
             $data['access_token'],
             $data['refresh_token'],
+            $data['enabled'],
             $data['token_type'],
             $data['expires_in'],
             explode(',', $data['scope'])
