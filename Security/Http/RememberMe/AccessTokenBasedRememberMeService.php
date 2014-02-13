@@ -39,6 +39,15 @@ class AccessTokenBasedRememberMeService extends AbstractRememberMeServices
         return $user;
     }
 
+    public function regenerateRememberMeTokenIfPresent(Request $request, Response $response, TokenInterface $token)
+    {
+        if (!$this->hasRememberMeCookie($request)) {
+            return;
+        }
+
+        $this->onLoginSuccess($request, $response, $token);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -90,5 +99,11 @@ class AccessTokenBasedRememberMeService extends AbstractRememberMeServices
             $data['expires_in'],
             explode(',', $data['scope'])
         );
+    }
+
+    private function hasRememberMeCookie(Request $request)
+    {
+        $cookieName = $this->options['name'];
+        return $request->cookies->get($cookieName) !== null;
     }
 }
