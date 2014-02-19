@@ -4,6 +4,7 @@ namespace Ant\Bundle\ChateaSecureBundle\Security\User;
 use Ant\Bundle\ChateaSecureBundle\Security\User\UserProvider;
 use Ant\Bundle\ChateaSecureBundle\Security\User\User;
 use Guzzle\Http\Exception\BadResponseException;
+use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 
 class UserProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -72,6 +73,27 @@ class UserProviderTest extends \PHPUnit_Framework_TestCase
         $this->userProvider->loadUser('username', 'password');
     }
 
+    public function testLoadUserWhenApiIsDown()
+    {
+        $exception = $this->getApiException();
+
+        $this->authenticator
+            ->expects($this->once())
+            ->method('withUserCredentials')
+            ->with('username', 'password')
+            ->will($this->throwException($exception));
+
+        try{
+            $this->userProvider->loadUser('username', 'password');
+        }catch(BadCredentialsException $e){
+            $this->assertEquals('Authentication service down', $e->getMessage());
+            return;
+        }
+
+        $this->fail('Expected to raise an BadCredentialsException with message: Service down');
+    }
+
+
     public function testRefreshUser()
     {
         $this->authenticator
@@ -134,6 +156,14 @@ class UserProviderTest extends \PHPUnit_Framework_TestCase
     private function getUsernameNotFoundException()
     {
         return $this->getMockBuilder('Symfony\Component\Security\Core\Exception\UsernameNotFoundException')
+            ->disableOriginalConstructor()
+            ->getMock();
+    }
+
+
+    private function getApiException()
+    {
+        return $this->getMockBuilder('Ant\Bundle\ChateaSecureBundle\Client\HttpAdapter\Exception\ApiException')
             ->disableOriginalConstructor()
             ->getMock();
     }

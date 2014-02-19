@@ -10,6 +10,7 @@
  */
 namespace Ant\Bundle\ChateaSecureBundle\Client\HttpAdapter;
 
+use Ant\Bundle\ChateaSecureBundle\Client\HttpAdapter\Exception\ApiException;
 use InvalidArgumentException;
 use Guzzle\Service\ClientInterface;
 use Guzzle\Service\Client;
@@ -132,9 +133,13 @@ class GuzzleHttpAdapter implements HttpAdapterInterface
         try{
             return $command->execute();
         }catch (ServerErrorResponseException $ex){
-            throw new AuthenticationException($ex->getMessage(), 400, $ex);
+            throw new ApiException();
         }catch (BadResponseException $ex){
-            throw new AuthenticationException($ex->getMessage(), 400, $ex);
+            if($ex->getResponse()->getStatusCode() == 400){
+                throw new AuthenticationException($ex->getMessage(), 400, $ex);
+            }else{
+                throw new ApiException();
+            }
         }catch(ClientErrorResponseException $ex){
             throw new AuthenticationException($ex->getMessage(), 400, $ex);
         }catch(CurlException $ex){
@@ -184,13 +189,17 @@ class GuzzleHttpAdapter implements HttpAdapterInterface
         try{
             return $command->execute();
         }catch (ServerErrorResponseException $ex){
-            throw new AuthenticationException($ex->getMessage(), 400, $ex);
+            throw new ApiException();
         }catch (BadResponseException $ex){
-            throw new AuthenticationException($ex->getMessage(), 400, $ex);
+            if($ex->getResponse()->getStatusCode() == 400){
+                throw new AuthenticationException($ex->getMessage(), 400, $ex);
+            }else{
+                throw new ApiException();
+            }
         }catch(ClientErrorResponseException $ex){
             throw new AuthenticationException($ex->getMessage(), 400, $ex);
         }catch(CurlException $ex){
-            throw new AuthenticationException($ex->getMessage(), 400, $ex);
+            throw new ApiException();
         }
     }
     /**
@@ -221,13 +230,17 @@ class GuzzleHttpAdapter implements HttpAdapterInterface
         try{
             return $command->execute();
         }catch (ServerErrorResponseException $ex){
-            throw new AuthenticationException($ex->getMessage(), 400, $ex);
+            throw new ApiException();
         }catch (BadResponseException $ex){
-            throw new AuthenticationException($ex->getMessage(), 400, $ex);
+            if($ex->getResponse()->getStatusCode() == 400){
+                throw new AuthenticationException($ex->getMessage(), 400, $ex);
+            }else{
+                throw new ApiException();
+            }
         }catch(ClientErrorResponseException $ex){
             throw new AuthenticationException($ex->getMessage(), 400, $ex);
         }catch(CurlException $ex){
-            throw new AuthenticationException($ex->getMessage(), 400, $ex);
+            throw new ApiException();
         }
     }
     /**
@@ -265,13 +278,17 @@ class GuzzleHttpAdapter implements HttpAdapterInterface
         try{
             return $command->execute();
         }catch (ServerErrorResponseException $ex){
-            throw new AuthenticationException($ex->getMessage(), 400, $ex);
+            throw new ApiException();
         }catch (BadResponseException $ex){
-            throw new AuthenticationException($ex->getMessage(), 400, $ex);
+            if($ex->getResponse()->getStatusCode() == 400){
+                throw new AuthenticationException($ex->getMessage(), 400, $ex);
+            }else{
+                throw new ApiException();
+            }
         }catch(ClientErrorResponseException $ex){
             throw new AuthenticationException($ex->getMessage(), 400, $ex);
         }catch(CurlException $ex){
-            throw new AuthenticationException($ex->getMessage(), 400, $ex);
+            throw new ApiException();
         }
     }
 
@@ -302,13 +319,17 @@ class GuzzleHttpAdapter implements HttpAdapterInterface
             return $request->send()->getBody(true);
 
         }catch (ServerErrorResponseException $ex){
-            throw new AuthenticationException($ex->getMessage(), 400, $ex);
+            throw new ApiException();
         }catch (BadResponseException $ex){
-            throw new AuthenticationException($ex->getMessage(), 400, $ex);
+            if($ex->getResponse()->getStatusCode() == 400){
+                throw new AuthenticationException($ex->getMessage(), 400, $ex);
+            }else{
+                throw new ApiException();
+            }
         }catch(ClientErrorResponseException $ex){
             throw new AuthenticationException($ex->getMessage(), 400, $ex);
         }catch(CurlException $ex){
-            throw new AuthenticationException($ex->getMessage(), 400, $ex);
+            throw new ApiException();
         }
     }
     public function getCommand($name, array $args = array()){

@@ -1,8 +1,10 @@
 <?php
 namespace Ant\Bundle\ChateaSecureBundle\Security\User;
 
-use Ant\Bundle\ChateaSecureBundle\Client\HttpAdapter\HttpAdapterInterface;
 use Ant\Bundle\ChateaSecureBundle\Client\HttpAdapter\AuthenticationException;
+use Ant\Bundle\ChateaSecureBundle\Client\HttpAdapter\Exception\ApiException;
+use Ant\Bundle\ChateaSecureBundle\Client\HttpAdapter\HttpAdapterInterface;
+use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -28,6 +30,8 @@ class UserProvider implements ChateaUserProviderInterface
         try {
             $data = $this->authentication->withUserCredentials($username, $password);
             return $this->mapJsonToUser($data, $username);
+        } catch (ApiException $ae) {
+            throw new BadCredentialsException('Authentication service down');
         } catch (AuthenticationException $e) {
             throw new UsernameNotFoundException(sprintf('Incorrect username or password for %s ', $username),30,$e);
         }
