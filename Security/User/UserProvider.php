@@ -29,7 +29,7 @@ class UserProvider implements ChateaUserProviderInterface
         }
         try {
             $data = $this->authentication->withUserCredentials($username, $password);
-            return $this->mapJsonToUser($data, $username);
+            return $this->mapJsonToUser($data);
         } catch (ApiException $ae) {
             throw new BadCredentialsException('Authentication service down');
         } catch (AuthenticationException $e) {
@@ -114,11 +114,11 @@ class UserProvider implements ChateaUserProviderInterface
         return $class === ' Ant\Bundle\ChateaSecureBundle\Security\User\User';
     }
 
-    protected function mapJsonToUser($data, $username)
+    protected function mapJsonToUser($data)
     {
         return new User(
             $data['id'],
-            $username,
+            $data['username'],
             $data['access_token'],
             $data['refresh_token'],
         	$data['enabled'],

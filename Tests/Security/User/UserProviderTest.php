@@ -57,6 +57,20 @@ class UserProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($user, $this->userProvider->loadUser('username', 'password'));
     }
 
+    public function testLoadUserAuthenticatedByEmail()
+    {
+        $responseToken = $this->getResponseToken();
+        $user = $this->getExpectedUser();
+
+        $this->authenticator
+            ->expects($this->once())
+            ->method('withUserCredentials')
+            ->with('user@mycuteemail.com', 'password')
+            ->will($this->returnValue($responseToken));
+
+        $this->assertEquals($user, $this->userProvider->loadUser('user@mycuteemail.com', 'password'));
+    }
+
     /**
      * @expectedException Symfony\Component\Security\Core\Exception\UsernameNotFoundException
      */
@@ -130,6 +144,7 @@ class UserProviderTest extends \PHPUnit_Framework_TestCase
                     "scope" => "role_1",
                     "refresh_token" => "12HHIIK",
                     'enabled' => true,
+                    'username' => 'username',
                 );
     }
 
