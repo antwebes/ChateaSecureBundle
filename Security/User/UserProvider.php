@@ -124,7 +124,7 @@ class UserProvider implements ChateaUserProviderInterface
         	$data['enabled'],
             $data['token_type'],
             $data['expires_in'],
-			explode(',', $data['scope'])
+			explode(',', $data['roles'])
         );
     }
 }

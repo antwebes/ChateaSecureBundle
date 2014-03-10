@@ -141,7 +141,7 @@ class UserProviderTest extends \PHPUnit_Framework_TestCase
                     "access_token" => "321IUKKL",
                     "expires_in" => 3600,
                     "token_type" => "password",
-                    "scope" => "role_1",
+                    "roles" => "role_1",
                     "refresh_token" => "12HHIIK",
                     'enabled' => true,
                     'username' => 'username',
