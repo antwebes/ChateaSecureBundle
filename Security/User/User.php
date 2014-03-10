@@ -14,6 +14,7 @@ class User implements AdvancedUserInterface
     private $tokenType;
     private $expired_at;
     private $accountNonLocked;
+    private $scope;
     private $roles;
 
     /**
@@ -25,9 +26,10 @@ class User implements AdvancedUserInterface
      * @param bool $validated value enabled in API, this value is the value really if user is enabled or disabled 
      * @param string $tokenType
      * @param number $expiresIn
-     * @param array $scopes
+     * @param array $scopes for example password
+     * @param array $roles
      */
-    public function __construct($id, $username, $accessToken, $refreshToken, $validated, $tokenType = 'Bearer', $expiresIn = 0, array $scopes = array() )
+    public function __construct($id, $username, $accessToken, $refreshToken, $validated, $tokenType = 'Bearer', $expiresIn = 0, array $scope=array(), array $roles = array() )
     {
         $this->id = $id;
         $this->username = $username;
@@ -42,12 +44,11 @@ class User implements AdvancedUserInterface
         $this->accountNonLocked = true;
         $this->enabled = true;
 
-        $this->roles = array();
-        $this->scopes = $scopes;
-        foreach ($scopes as $scope) {
-            array_push($this->roles, 'ROLE_' . strtoupper($scope));
-        }
+        $this->roles = $roles;
+        $this->scope = $scope;
+        /* @deprecated 10-03-2014
         array_push($this->roles, 'ROLE_API_USER');
+        */
     }
 
     /**

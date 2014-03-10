@@ -141,7 +141,8 @@ class UserProviderTest extends \PHPUnit_Framework_TestCase
                     "access_token" => "321IUKKL",
                     "expires_in" => 3600,
                     "token_type" => "password",
-                    "roles" => "role_1",
+        			"scope" => "password",
+                    "roles" => array("role_1"),
                     "refresh_token" => "12HHIIK",
                     'enabled' => true,
                     'username' => 'username',
@@ -150,7 +151,7 @@ class UserProviderTest extends \PHPUnit_Framework_TestCase
 
     private function getExpectedUser($isCredentialsNonExpired = true)
     {
-        return new User(2, 'username', '321IUKKL', '12HHIIK', true, 'password', 3600, array('role_1'));
+        return new User(2, 'username', '321IUKKL', '12HHIIK', true, 'password', 3600, array("password"), array('role_1'));
     }
 
     private function getExpectedMockedUser($isCredentialsNonExpired = true)
