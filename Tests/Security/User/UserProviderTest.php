@@ -6,17 +6,30 @@ use Ant\Bundle\ChateaSecureBundle\Security\User\User;
 use Guzzle\Http\Exception\BadResponseException;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 
+class UserProviderInternal extends UserProvider
+{
+    /**
+     * @param $data
+     * @return User
+     */
+    public function mapJsonToUser($data)
+    {
+        return parent::mapJsonToUser($data);
+    }
+}
+
 class UserProviderTest extends \PHPUnit_Framework_TestCase
 {
     private $authenticator;
     private $userProvider;
-
+    private $userProviderInternal;
     public function setUp()
     {
         $this->authenticator = $this->getMockBuilder('Ant\Bundle\ChateaSecureBundle\Client\HttpAdapter\HttpAdapterInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $this->userProvider = new UserProvider($this->authenticator);
+        $this->userProviderInternal = new UserProviderInternal($this->authenticator);
     }
 
     public function testLoadUserThrowsExceptionIfUsernameIsNotGiven()
@@ -134,6 +147,29 @@ class UserProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($user->isCredentialsNonExpired());
     }
 
+    public function testMapJsonToUser()
+    {
+
+        $data = array('id'=>1,
+            'username'=>'username-test',
+            'access_token'=>'access_token-test',
+            'refresh_token'=>'refresh_token-test',
+            'enabled'=>true,
+            'token_type'=>'token_type-test',
+            'expires_in'=>'3600',
+            'scope' =>'scope_1,scope_2,scope_3',
+            'roles'=>array('ROLE_A','ROLE_B','ROLE_C')
+        );
+
+        $user = $this->userProviderInternal->mapJsonToUser($data);
+        $this->assertEquals(1,$user->getId());
+        $this->assertEquals('username-test',$user->getUsername());
+        $this->assertEquals('access_token-test',$user->getAccessToken());
+        $this->assertEquals(true,$user->isEnabled());
+        $this->assertEquals(array('scope_1','scope_2','scope_3'),$user->getScopes());
+        $this->assertEquals(array('ROLE_A','ROLE_B','ROLE_C'),$user->getRoles());
+
+    }
     private function getResponseToken()
     {
         return array(

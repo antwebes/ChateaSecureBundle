@@ -14,7 +14,7 @@ class User implements AdvancedUserInterface
     private $tokenType;
     private $expired_at;
     private $accountNonLocked;
-    private $scope;
+    private $scopes;
     private $roles;
 
     /**
@@ -29,7 +29,7 @@ class User implements AdvancedUserInterface
      * @param array $scopes for example password
      * @param array $roles
      */
-    public function __construct($id, $username, $accessToken, $refreshToken, $validated, $tokenType = 'Bearer', $expiresIn = 0, array $scope=array(), array $roles = array() )
+    public function __construct($id, $username, $accessToken, $refreshToken, $validated, $tokenType = 'Bearer', $expiresIn = 0, array $scopes=array(), array $roles = array() )
     {
         $this->id = $id;
         $this->username = $username;
@@ -45,7 +45,7 @@ class User implements AdvancedUserInterface
         $this->enabled = true;
 
         $this->roles = $roles;
-        $this->scope = $scope;
+        $this->scopes = $scopes;
         /* @deprecated 10-03-2014
         array_push($this->roles, 'ROLE_API_USER');
         */
