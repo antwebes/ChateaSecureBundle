@@ -226,7 +226,6 @@ class GuzzleHttpAdapter implements HttpAdapterInterface
         $command = $this->getCommand('withClientCredentials',
             array('client_id'=>$this->getClientId(),'client_secret'=>$this->getSecret())
         );
-
         try{
             return $command->execute();
         }catch (ServerErrorResponseException $ex){
