@@ -14,11 +14,12 @@ class AccessTokenBasedRememberMeService extends AbstractRememberMeServices
 {
     protected function processAutoLoginCookie(array $cookieParts, Request $request)
     {
-        if(count($cookieParts) !== 5) {
+        if(count($cookieParts) !== 6) {
+            ldd($cookieParts);
             throw new AuthenticationException('The cookie is invalid.');
         }
 
-        list($id, $username, $accessToken, $expiresAt, $enabled) = $cookieParts;
+        list($id, $username, $accessToken, $expiresAt, $enabled, $roles) = $cookieParts;
 
         $authUserData = array(
                 'id' => $id,
@@ -27,9 +28,10 @@ class AccessTokenBasedRememberMeService extends AbstractRememberMeServices
                 'token_type' => '',
                 'enabled' => $enabled,
                 'expires_in' => $expiresAt - time(),
-                'scope' => ''
+                'scope' => '',
+                'roles' => $roles
             );
-            
+
         $user = $this->mapJsonToUser($authUserData, $username);
 
         if(!$user->isCredentialsNonExpired()){
@@ -55,12 +57,14 @@ class AccessTokenBasedRememberMeService extends AbstractRememberMeServices
     {
         $user = $token->getUser();
         $expires = time() + $this->options['lifetime'];
+        
         $value = $this->generateCookieValue(
             $user->getId(),
             $user->getUsername(),
             $user->getAccessToken(),
             $user->getExpiresAt(),
-            $user->isValidated()
+            $user->isValidated(),
+            $user->getRoles()
             );
 
         $response->headers->setCookie(
@@ -76,14 +80,15 @@ class AccessTokenBasedRememberMeService extends AbstractRememberMeServices
         );
     }
 
-    protected function generateCookieValue($id, $username, $accessToken, $expiresAt, $enabled)
+    protected function generateCookieValue($id, $username, $accessToken, $expiresAt, $enabled, $roles)
     {
         return $this->encodeCookie(array(
             $id,
             $username,
             $accessToken,
             $expiresAt,
-            $enabled
+            $enabled,
+            $roles
         ));
     }
 
@@ -97,7 +102,8 @@ class AccessTokenBasedRememberMeService extends AbstractRememberMeServices
             $data['enabled'],
             $data['token_type'],
             $data['expires_in'],
-            explode(',', $data['scope'])
+            explode(',', $data['scope']),
+            $data['roles']
         );
     }
 
@@ -105,5 +111,27 @@ class AccessTokenBasedRememberMeService extends AbstractRememberMeServices
     {
         $cookieName = $this->options['name'];
         return $request->cookies->get($cookieName) !== null;
+    }
+
+    protected function decodeCookie($rawCookie)
+    {
+        $cookie = parent::decodeCookie($rawCookie);
+
+        $fromJson = function($element){
+            $arr = json_decode($element, true);
+
+            return $arr;
+        };
+
+        return array_map($fromJson, $cookie);
+    }
+
+    protected function encodeCookie(array $cookieParts)
+    {
+        $serializeToJson = function($element){
+            return json_encode($element);
+        };
+
+        return parent::encodeCookie(array_map($serializeToJson, $cookieParts));
     }
 }
