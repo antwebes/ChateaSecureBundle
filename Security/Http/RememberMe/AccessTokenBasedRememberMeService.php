@@ -15,7 +15,6 @@ class AccessTokenBasedRememberMeService extends AbstractRememberMeServices
     protected function processAutoLoginCookie(array $cookieParts, Request $request)
     {
         if(count($cookieParts) !== 6) {
-            ldd($cookieParts);
             throw new AuthenticationException('The cookie is invalid.');
         }
 
