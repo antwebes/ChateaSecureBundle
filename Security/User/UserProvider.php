@@ -4,6 +4,7 @@ namespace Ant\Bundle\ChateaSecureBundle\Security\User;
 use Ant\Bundle\ChateaSecureBundle\Client\HttpAdapter\AuthenticationException;
 use Ant\Bundle\ChateaSecureBundle\Client\HttpAdapter\Exception\ApiException;
 use Ant\Bundle\ChateaSecureBundle\Client\HttpAdapter\HttpAdapterInterface;
+use Ant\Bundle\ChateaClientBundle\Api\Model\User as ApiUser;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
@@ -76,7 +77,9 @@ class UserProvider implements ChateaUserProviderInterface
      */
     public function refreshUser(UserInterface $user)
     {
-        if (!$user instanceof User){
+        if($user instanceof ApiUser){
+            return $this->loadUser($user->getUsername(), $user->getPlainPassword());
+        }else if (!$user instanceof User){
             $ex = new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', get_class($user)));
             
             throw $ex;
