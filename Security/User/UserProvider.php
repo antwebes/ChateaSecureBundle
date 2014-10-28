@@ -31,7 +31,7 @@ class UserProvider implements ChateaUserProviderInterface
         try {
             $data = $this->authentication->withUserCredentials($username, $password);
             return $this->mapJsonToUser($data);
-        } catch (ApiException $ae) {ldd($ae->getMessage());
+        } catch (ApiException $ae) {
             throw new BadCredentialsException('Authentication service down');
         } catch (AuthenticationException $e) {
             throw new UsernameNotFoundException(sprintf('Incorrect username or password for %s ', $username),30,$e);
