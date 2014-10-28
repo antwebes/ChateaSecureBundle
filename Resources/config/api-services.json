@@ -133,6 +133,37 @@
                 }
             }
         },
+        "withFacebookId":{
+            "httpMethod": "POST",
+            "uri": "oauth/v2/token",
+            "summary": "Auth client with Facebook id",
+            "parameters": {
+                "grant_type":{
+                    "location": "json",
+                    "type": "string",
+                    "default": "facebook_id",
+                    "description": "the grant_type"
+                },
+                "client_id":{
+                    "location": "json",
+                    "type": "string",
+                    "required": true,
+                    "description": "the client_id"
+                },
+                "client_secret":{
+                    "location": "json",
+                    "type": "string",
+                    "required": true,
+                    "description": "the secret"
+                },
+                "facebook_id":{
+                    "location": "json",
+                    "type": "string",
+                    "required": true,
+                    "description": "the facebook id"
+                }
+            }
+        },
         "RevokeToken":{
             "httpMethod": "DELETE",
             "uri": "api/oauth/v2/revoke",

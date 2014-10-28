@@ -242,6 +242,7 @@ class GuzzleHttpAdapter implements HttpAdapterInterface
             throw new ApiException();
         }
     }
+
     /**
      *  After the client has been authorized for access, they can use a refresh token to get a new access token.
      *
@@ -272,6 +273,55 @@ class GuzzleHttpAdapter implements HttpAdapterInterface
 
         $command = $this->getCommand('withRefreshToken',
             array('client_id'=>$this->getClientId(),'client_secret'=>$this->getSecret(),'refresh_token'=>$refresh_token)
+        );
+
+        try{
+            return $command->execute();
+        }catch (ServerErrorResponseException $ex){
+            throw new ApiException();
+        }catch (BadResponseException $ex){
+            if($ex->getResponse()->getStatusCode() == 400){
+                throw new AuthenticationException($ex->getMessage(), 400, $ex);
+            }else{
+                throw new ApiException();
+            }
+        }catch(ClientErrorResponseException $ex){
+            throw new AuthenticationException($ex->getMessage(), 400, $ex);
+        }catch(CurlException $ex){
+            throw new ApiException();
+        }
+    }
+
+    /**
+     *  After the client has been authorized for access, they can use a refresh token to get a new access token.
+     *
+     * @param string $refresh_token The client refresh token that you obtain in first request of credentials.
+     *
+     * @return array|string Associative array with client credentials | Message with error in json format
+     *
+     * @throws InvalidArgumentException This exception is thrown if any parameter has errors
+     *
+     * @throws AuthenticationException This exception is thrown if you do not credentials or you cannot use this method
+     *
+     * @example Get client credentials
+     *
+     *      $authenticationInstande->withRefreshToken('refresh-token-demo');
+     *
+     *  array("access_token"    => access-token-demo,
+     *        "expires_in"      => 3600,
+     *        "token_type"      => bearer,
+     *        "scope"           => password,
+     *        "refresh_token"   => refresh-token-demo
+     *  );
+     */
+    public function withFacebookId($facebook_id)
+    {
+        if (!is_string($facebook_id) || 0 >= strlen($facebook_id)) {
+            throw new InvalidArgumentException("facebook_id must be a non-empty string");
+        }
+
+        $command = $this->getCommand('withFacebookId',
+            array('client_id'=>$this->getClientId(),'client_secret'=>$this->getSecret(),'facebook_id'=>$facebook_id)
         );
 
         try{

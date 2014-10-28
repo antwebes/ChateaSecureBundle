@@ -126,6 +126,30 @@ interface HttpAdapterInterface
     public function withRefreshToken($refresh_token);
 
     /**
+     *  After the client has been authorized for access, they can use a refresh token to get a new access token.
+     *
+     * @param string $refresh_token The client refresh token that you obtain in first request of credentials.
+     *
+     * @return array|string Associative array with client credentials | Message with error in json format
+     *
+     * @throws InvalidArgumentException This exception is thrown if any parameter has errors
+     *
+     * @throws AuthenticationException This exception is thrown if you do not credentials or you cannot use this method
+     *
+     * @example Get client credentials
+     *
+     *      $authenticationInstande->withRefreshToken('refresh-token-demo');
+     *
+     *  array("access_token"    => access-token-demo,
+     *        "expires_in"      => 3600,
+     *        "token_type"      => bearer,
+     *        "scope"           => password,
+     *        "refresh_token"   => refresh-token-demo
+     *  );
+     */
+    public function withFacebookId($facebook_id);
+
+    /**
      * Disable the service credentials as well as the session.
      *
      * @param string $access_token The toke to revoke

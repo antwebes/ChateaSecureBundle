@@ -31,10 +31,26 @@ class UserProvider implements ChateaUserProviderInterface
         try {
             $data = $this->authentication->withUserCredentials($username, $password);
             return $this->mapJsonToUser($data);
-        } catch (ApiException $ae) {
+        } catch (ApiException $ae) {ldd($ae->getMessage());
             throw new BadCredentialsException('Authentication service down');
         } catch (AuthenticationException $e) {
             throw new UsernameNotFoundException(sprintf('Incorrect username or password for %s ', $username),30,$e);
+        }
+    }
+
+    public function loadUserByFacebookId($facebookId)
+    {
+        if (empty($facebookId)) {
+            throw new \InvalidArgumentException('The facebookId cannot be empty.');
+        }
+
+        try {
+            $data = $this->authentication->withFacebookId($facebookId);
+            return $this->mapJsonToUser($data);
+        } catch (ApiException $ae) {
+            throw new BadCredentialsException('Authentication service down');
+        } catch (AuthenticationException $e) {
+            throw new UsernameNotFoundException('Incorrect facebookId',30,$e);
         }
     }
 
@@ -114,7 +130,7 @@ class UserProvider implements ChateaUserProviderInterface
      */
     public function supportsClass($class)
     {
-        return $class === ' Ant\Bundle\ChateaSecureBundle\Security\User\User';
+        return $class === 'Ant\Bundle\ChateaSecureBundle\Security\User\User';
     }
 
     protected function mapJsonToUser($data)
