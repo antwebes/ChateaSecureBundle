@@ -4,6 +4,7 @@ namespace Ant\Bundle\ChateaSecureBundle\Security\User;
 use Ant\Bundle\ChateaSecureBundle\Client\HttpAdapter\AuthenticationException;
 use Ant\Bundle\ChateaSecureBundle\Client\HttpAdapter\Exception\ApiException;
 use Ant\Bundle\ChateaSecureBundle\Client\HttpAdapter\HttpAdapterInterface;
+use Ant\Bundle\ChateaClientBundle\Api\Model\User as ApiUser;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
@@ -34,6 +35,22 @@ class UserProvider implements ChateaUserProviderInterface
             throw new BadCredentialsException('Authentication service down');
         } catch (AuthenticationException $e) {
             throw new UsernameNotFoundException(sprintf('Incorrect username or password for %s ', $username),30,$e);
+        }
+    }
+
+    public function loadUserByFacebookId($facebookId)
+    {
+        if (empty($facebookId)) {
+            throw new \InvalidArgumentException('The facebookId cannot be empty.');
+        }
+
+        try {
+            $data = $this->authentication->withFacebookId($facebookId);
+            return $this->mapJsonToUser($data);
+        } catch (ApiException $ae) {
+            throw new BadCredentialsException('Authentication service down');
+        } catch (AuthenticationException $e) {
+            throw new UsernameNotFoundException('Incorrect facebookId',30,$e);
         }
     }
 
@@ -76,7 +93,9 @@ class UserProvider implements ChateaUserProviderInterface
      */
     public function refreshUser(UserInterface $user)
     {
-        if (!$user instanceof User){
+        if($user instanceof ApiUser){
+            return $this->loadUser($user->getUsername(), $user->getPlainPassword());
+        }else if (!$user instanceof User){
             $ex = new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', get_class($user)));
             
             throw $ex;
@@ -111,7 +130,7 @@ class UserProvider implements ChateaUserProviderInterface
      */
     public function supportsClass($class)
     {
-        return $class === ' Ant\Bundle\ChateaSecureBundle\Security\User\User';
+        return $class === 'Ant\Bundle\ChateaSecureBundle\Security\User\User';
     }
 
     protected function mapJsonToUser($data)
