@@ -1,0 +1,4 @@
+login.login: "Autenticar"
+login.username: "Nombre de usuario"
+login.password: "Contraseña"
+login.submit: "Autenticar"
