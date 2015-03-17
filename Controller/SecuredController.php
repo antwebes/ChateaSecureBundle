@@ -25,6 +25,7 @@ class SecuredController extends Controller
             $error = $request->getSession()->get(SecurityContext::AUTHENTICATION_ERROR);
         }
 
+        $error = $this->extractAuthErrorI18N($error);
 
         return $this->render('ChateaSecureBundle:Secured:login.html.twig',array(
             'last_username' => $request->getSession()->get(SecurityContext::LAST_USERNAME),
@@ -46,5 +47,20 @@ class SecuredController extends Controller
     public function logoutAction()
     {
         // The security layer will intercept this request
+    }
+
+    private function extractAuthErrorI18N($error)
+    {
+        $translator = $this->get('translator');
+        $translationMap = array(
+            'Bad credentials' => 'login.bad_credentials'
+        );
+        $message = $error->getMessage();
+
+        if(isset($translationMap[$message])){
+            return $translator->trans($translationMap[$message], array(), 'Login');
+        }
+
+        return $message;
     }
 }

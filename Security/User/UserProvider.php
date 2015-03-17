@@ -9,48 +9,51 @@ use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class UserProvider implements ChateaUserProviderInterface
 {
     private $authentication;
+    private $translator;
 
-    public function __construct(HttpAdapterInterface $authentication)
+    public function __construct(HttpAdapterInterface $authentication, TranslatorInterface $translator)
     {
         $this->authentication = $authentication;
+        $this->translator = $translator;
     }
 
     public function loadUser($username, $password)
     {
         if (empty($username)) {
-            throw new \InvalidArgumentException('The username cannot be empty.');
+            throw new \InvalidArgumentException($this->translator->trans('login.username_not_empty', array(), 'Login'));
         }
 
         if(empty($password)) {
-            throw new \InvalidArgumentException('The password cannot be empty.');
+            throw new \InvalidArgumentException($this->translator->trans('login.password_not_empty', array(), 'Login'));
         }
         try {
             $data = $this->authentication->withUserCredentials($username, $password);
             return $this->mapJsonToUser($data);
         } catch (ApiException $ae) {
-            throw new BadCredentialsException('Authentication service down');
+            throw new BadCredentialsException($this->translator->trans('login.service_down', array(), 'Login'));
         } catch (AuthenticationException $e) {
-            throw new UsernameNotFoundException(sprintf('Incorrect username or password for %s ', $username),30,$e);
+            throw new UsernameNotFoundException($this->translator->trans('login.incorrect_credentialas', array('%username%' => $username), 'Login'),30,$e);
         }
     }
 
     public function loadUserByFacebookId($facebookId)
     {
         if (empty($facebookId)) {
-            throw new \InvalidArgumentException('The facebookId cannot be empty.');
+            throw new \InvalidArgumentException($this->translator->trans('login.facebookid_not_empty', array(), 'Login'));
         }
 
         try {
             $data = $this->authentication->withFacebookId($facebookId);
             return $this->mapJsonToUser($data);
         } catch (ApiException $ae) {
-            throw new BadCredentialsException('Authentication service down');
+            throw new BadCredentialsException($this->translator->trans('login.service_down', array(), 'Login'));
         } catch (AuthenticationException $e) {
-            throw new UsernameNotFoundException('Incorrect facebookId',30,$e);
+            throw new UsernameNotFoundException($this->translator->trans('login.incorrect_facebookid', array(), 'Login'),30,$e);
         }
     }
 
@@ -71,7 +74,7 @@ class UserProvider implements ChateaUserProviderInterface
      */
     public function loadUserByUsername($username)
     {
-        throw new \Exception("this method is not soported");
+        throw new \Exception($this->translator->trans('login.method_not_supported', array(), 'Login'));
     }
 
 
@@ -96,7 +99,7 @@ class UserProvider implements ChateaUserProviderInterface
         if($user instanceof ApiUser){
             return $this->loadUser($user->getUsername(), $user->getPlainPassword());
         }else if (!$user instanceof User){
-            $ex = new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', get_class($user)));
+            $ex = new UnsupportedUserException($this->translator->trans('login.class_not_supported', array('%class%' => get_class($user))));
             
             throw $ex;
         }
@@ -105,7 +108,7 @@ class UserProvider implements ChateaUserProviderInterface
             $refreshToken = $user->getRefreshToken();
             
             if(empty($refreshToken)){
-                throw new UsernameNotFoundException(sprintf('Incorrect username or password for %s ', $user->getUsername()),30,null);
+                throw new UsernameNotFoundException($this->translator->trans('login.incorrect_credentialas', array('%username%' => $user->getUsername())),30,null);
             }
 
             try {
@@ -114,7 +117,7 @@ class UserProvider implements ChateaUserProviderInterface
                 $user->setRefreshToken($data['refresh_token']);
                 $user->setExpiresIn($data['expires_in']);
             } catch (AuthenticationException $e) {
-                throw new UsernameNotFoundException(sprintf('Incorrect username or password for %s ', $user->getUsername()),30,$e);
+                throw new UsernameNotFoundException($this->translator->trans('login.incorrect_credentialas', array('%username%' => $user->getUsername())),30,$e);
             }
         }
 

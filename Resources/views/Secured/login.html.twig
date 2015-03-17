@@ -6,7 +6,7 @@
     <h1 class="title">{{ "login.login" | trans }}</h1>
 
     {% if error %}
-        <div class="error">{{ error.message }}</div>
+        <div class="error">{{ error }}</div>
     {% endif %}
 
     <form action="{{ path("_security_check") }}" method="post" id="login">
