@@ -15,7 +15,7 @@ class SecuredController extends Controller
     public function loginAction(Request $request)
     {
         $securityContext = $this->container->get('security.context');
-        if ($securityContext->isGranted('IS_AUTHENTICATED_FULLY')) {
+        if ($securityContext->isGranted('IS_AUTHENTICATED_FULLY') && $this->get('security.context')->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
             return $this->redirect("/");
         }
 
@@ -25,7 +25,9 @@ class SecuredController extends Controller
             $error = $request->getSession()->get(SecurityContext::AUTHENTICATION_ERROR);
         }
 
-        $error = $this->extractAuthErrorI18N($error);
+        if ($error){
+            $error = $this->extractAuthErrorI18N($error);
+        }
 
         return $this->render('ChateaSecureBundle:Secured:login.html.twig',array(
             'last_username' => $request->getSession()->get(SecurityContext::LAST_USERNAME),
