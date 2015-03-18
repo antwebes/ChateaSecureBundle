@@ -1,0 +1,13 @@
+login.login: "Login"
+login.username: "Username"
+login.password: "Password"
+login.submit: "Login"
+login.bad_credentials: "Bad credentials"
+login.service_down: 'Authentication service down'
+login.incorrect_credentialas: 'Incorrect username or password for %username%'
+login.class_not_supported: 'Instances of "%class%" are not supported.'
+login.method_not_supported: 'This method is not soported'
+login.incorrect_facebookid: 'Incorrect facebookId'
+login.facebookid_not_empty: 'The facebookId cannot be empty.'
+login.password_not_empty: 'The password cannot be empty.'
+login.username_not_empty: 'The username cannot be empty.'

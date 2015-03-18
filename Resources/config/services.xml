@@ -27,6 +27,7 @@
 
         <service id="antwebs_chateasecure_user_provider" class="%antwebs_chateasecure_user_provider.class%" >
             <argument type="service" id="chat_secure.adapter" />
+            <argument type="service" id="translator" />
         </service>
 
         <service id="security.authentication_provider.antwebs_chateasecure" class="%antwebs_chateasecure_authentication_provider.class%" abstract="true" public="false">

@@ -1,0 +1,6 @@
+login.login: "Autenticar"
+login.username: "Nombre de usuario"
+login.password: "Contraseña"
+login.submit: "Autenticar"
+login.bad_credentials: "Usuario o contraseña incorrecto"
+login.service_down: 'Servicio de autenticación no disponible'

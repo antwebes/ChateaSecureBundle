@@ -14,10 +14,19 @@ class SecuredController extends Controller
      */
     public function loginAction(Request $request)
     {
+        $securityContext = $this->container->get('security.context');
+        if ($securityContext->isGranted('IS_AUTHENTICATED_FULLY') && $this->get('security.context')->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
+            return $this->redirect("/");
+        }
+
         if ($request->attributes->has(SecurityContext::AUTHENTICATION_ERROR)) {
             $error = $request->attributes->get(SecurityContext::AUTHENTICATION_ERROR);
         } else {
             $error = $request->getSession()->get(SecurityContext::AUTHENTICATION_ERROR);
+        }
+
+        if ($error){
+            $error = $this->extractAuthErrorI18N($error);
         }
 
         return $this->render('ChateaSecureBundle:Secured:login.html.twig',array(
@@ -40,5 +49,20 @@ class SecuredController extends Controller
     public function logoutAction()
     {
         // The security layer will intercept this request
+    }
+
+    private function extractAuthErrorI18N($error)
+    {
+        $translator = $this->get('translator');
+        $translationMap = array(
+            'Bad credentials' => 'login.bad_credentials'
+        );
+        $message = $error->getMessage();
+
+        if(isset($translationMap[$message])){
+            return $translator->trans($translationMap[$message], array(), 'Login');
+        }
+
+        return $message;
     }
 }
