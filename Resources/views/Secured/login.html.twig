@@ -12,7 +12,7 @@
     <form action="{{ path("_security_check") }}" method="post" id="login">
         <div>
             <label for="username">{{ "login.username" | trans }}</label>
-            <input type="text" id="username" name="_username" value="{{ last_username }}" />
+            <input type="text" id="username" name="_username" value="{{ last_username }}" required/>
         </div>
 
         <div>
