@@ -25,11 +25,15 @@ class UserProvider implements ChateaUserProviderInterface
     public function loadUser($username, $password)
     {
         if (empty($username)) {
-            throw new \InvalidArgumentException($this->translator->trans('login.username_not_empty', array(), 'Login'));
+            //here now I throw UsernameNotFoundException, because this exception are catched in UserAuthenticationProvider https://github.com/symfony/security-core/blob/master/Authentication/Provider/UserAuthenticationProvider.php#L71
+            //and or throw this exception to show the error or override UserAuthenticationProvider of Symfony
+            throw new UsernameNotFoundException($this->translator->trans('login.username_not_empty', array(), 'Login'));
         }
 
         if(empty($password)) {
-            throw new \InvalidArgumentException($this->translator->trans('login.password_not_empty', array(), 'Login'));
+            //here now I throw UsernameNotFoundException, because this exception are catched in UserAuthenticationProvider https://github.com/symfony/security-core/blob/master/Authentication/Provider/UserAuthenticationProvider.php#L71
+            //and or throw this exception to show the error or override UserAuthenticationProvider of Symfony
+            throw new UsernameNotFoundException($this->translator->trans('login.password_not_empty', array(), 'Login'));
         }
         try {
             $data = $this->authentication->withUserCredentials($username, $password);
@@ -143,11 +147,11 @@ class UserProvider implements ChateaUserProviderInterface
             $data['username'],
             $data['access_token'],
             $data['refresh_token'],
-        	$data['enabled'],
+            $data['enabled'],
             $data['token_type'],
             $data['expires_in'],
-        	explode(',', $data['scope']),
-			$data['roles']
+            explode(',', $data['scope']),
+            $data['roles']
         );
     }
 }
