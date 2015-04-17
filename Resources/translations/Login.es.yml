@@ -4,3 +4,4 @@ login.password: "Contraseña"
 login.submit: "Autenticar"
 login.bad_credentials: "Usuario o contraseña incorrecto"
 login.service_down: 'Servicio de autenticación no disponible'
+login.user_disabled: 'Este usuario está deshabilitado'

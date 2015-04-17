@@ -136,7 +136,7 @@ class GuzzleHttpAdapter implements HttpAdapterInterface
             throw new ApiException();
         }catch (BadResponseException $ex){
             if($ex->getResponse()->getStatusCode() == 400){
-                throw new AuthenticationException($ex->getMessage(), 400, $ex);
+                throw new AuthenticationException($ex->getResponse()->getBody(true), 400, $ex);
             }else{
                 throw new ApiException();
             }

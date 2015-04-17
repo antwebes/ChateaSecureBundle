@@ -35,13 +35,31 @@ class UserProvider implements ChateaUserProviderInterface
             //and or throw this exception to show the error or override UserAuthenticationProvider of Symfony
             throw new UsernameNotFoundException($this->translator->trans('login.password_not_empty', array(), 'Login'));
         }
+
         try {
             $data = $this->authentication->withUserCredentials($username, $password);
             return $this->mapJsonToUser($data);
         } catch (ApiException $ae) {
+
             throw new BadCredentialsException($this->translator->trans('login.service_down', array(), 'Login'));
         } catch (AuthenticationException $e) {
-            throw new UsernameNotFoundException($this->translator->trans('login.incorrect_credentialas', array('%username%' => $username), 'Login'),30,$e);
+            $error = 'login.incorrect_credentialas';
+            try {
+                $jsonResponse = json_decode($e->getMessage(), true);
+
+                if(isset($jsonResponse['error']) && $jsonResponse['error'] == 'user_disabled'){
+                    $error = 'login.user_disabled';
+                }
+            }catch(\Exception $e){
+
+            }
+
+            if($error == 'login.user_disabled'){
+                throw new BadCredentialsException($this->translator->trans($error, array('%username%' => $username), 'Login'),30,$e);
+            }else{
+                throw new UsernameNotFoundException($this->translator->trans($error, array('%username%' => $username), 'Login'),30,$e);
+            }
+
         }
     }
 
@@ -147,11 +165,11 @@ class UserProvider implements ChateaUserProviderInterface
             $data['username'],
             $data['access_token'],
             $data['refresh_token'],
-            $data['enabled'],
+        	$data['enabled'],
             $data['token_type'],
             $data['expires_in'],
-            explode(',', $data['scope']),
-            $data['roles']
+        	explode(',', $data['scope']),
+			$data['roles']
         );
     }
 }
