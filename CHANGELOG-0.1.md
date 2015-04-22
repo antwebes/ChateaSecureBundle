@@ -11,3 +11,7 @@ To get the diff between two versions, go to https://github.com/antwebes/ChateaSe
 
  * fix error when login with empty values in form login
  	* throw exception UsernameNotFoundException so symfony catch exception and show incorrect credentials
+
+* 0.1.3 (2015-04-22)
+ * user locked cannot logued.
+ 	* Client/HttpAdapter/GuzzleHttpAdapter.php return $ex->getResponse()->getBody(true) to can parse and translate the error
