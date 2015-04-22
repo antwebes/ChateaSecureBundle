@@ -18,7 +18,8 @@ class SecurityFactory extends FormLoginFactory
     {
         return 'security.authentication.listener.form';
     }
- 
+
+
     protected function createAuthProvider(ContainerBuilder $container, $id, $config, $userProviderId)
     {
         $provider = 'ecurity.authentication_provider.antwebs_chateasecure.'.$id;

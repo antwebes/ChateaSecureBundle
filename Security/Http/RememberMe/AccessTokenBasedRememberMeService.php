@@ -116,6 +116,7 @@ class AccessTokenBasedRememberMeService extends AbstractRememberMeServices
     {
         $cookie = parent::decodeCookie($rawCookie);
 
+        //since the data of the coockies are encode in json we need to desarialize them
         $fromJson = function($element){
             $arr = json_decode($element, true);
 
@@ -127,6 +128,7 @@ class AccessTokenBasedRememberMeService extends AbstractRememberMeServices
 
     protected function encodeCookie(array $cookieParts)
     {
+        //we serialize to json so arrays are transformed in string (so we can store the roles)
         $serializeToJson = function($element){
             return json_encode($element);
         };

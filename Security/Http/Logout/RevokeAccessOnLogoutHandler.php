@@ -48,6 +48,7 @@ class RevokeAccessOnLogoutHandler implements LogoutHandlerInterface
     {
         try {
             $user = $token->getUser();
+            //remove this token from the server
             $this->client->revokeToken($user->getAccessToken());
         }catch(\Exception $e){
 

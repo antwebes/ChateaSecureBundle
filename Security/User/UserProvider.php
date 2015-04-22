@@ -16,12 +16,22 @@ class UserProvider implements ChateaUserProviderInterface
     private $authentication;
     private $translator;
 
+    /**
+     * @param HttpAdapterInterface $authentication
+     * @param TranslatorInterface $translator
+     */
     public function __construct(HttpAdapterInterface $authentication, TranslatorInterface $translator)
     {
         $this->authentication = $authentication;
         $this->translator = $translator;
     }
 
+    /**
+     * Loads a user from the API if the username and password are valid
+     * @param $username
+     * @param $password
+     * @return User
+     */
     public function loadUser($username, $password)
     {
         if (empty($username)) {
@@ -63,6 +73,11 @@ class UserProvider implements ChateaUserProviderInterface
         }
     }
 
+    /**
+     * Authenticate with facebook id
+     * @param $facebookId
+     * @return User
+     */
     public function loadUserByFacebookId($facebookId)
     {
         if (empty($facebookId)) {
@@ -118,7 +133,7 @@ class UserProvider implements ChateaUserProviderInterface
      */
     public function refreshUser(UserInterface $user)
     {
-        if($user instanceof ApiUser){
+        if($user instanceof ApiUser){ //if I have an ApiUser instance I will try to obtain data from the server
             return $this->loadUser($user->getUsername(), $user->getPlainPassword());
         }else if (!$user instanceof User){
             $ex = new UnsupportedUserException($this->translator->trans('login.class_not_supported', array('%class%' => get_class($user))));
@@ -126,6 +141,10 @@ class UserProvider implements ChateaUserProviderInterface
             throw $ex;
         }
 
+        /*
+         * if the user has an expired access token we try to auntenticate with the refresh token
+         * In casde we don't success with the autentication we throw an exception
+         */
         if(!$user->isCredentialsNonExpired()){
             $refreshToken = $user->getRefreshToken();
             
@@ -135,6 +154,8 @@ class UserProvider implements ChateaUserProviderInterface
 
             try {
                 $data = $this->authentication->withRefreshToken($refreshToken);
+
+                //onevr we have authenticated wee add the acces token, refesh token and the expires in
                 $user->setAccessToken($data['access_token']);
                 $user->setRefreshToken($data['refresh_token']);
                 $user->setExpiresIn($data['expires_in']);
@@ -158,6 +179,11 @@ class UserProvider implements ChateaUserProviderInterface
         return $class === 'Ant\Bundle\ChateaSecureBundle\Security\User\User';
     }
 
+    /**
+     * maps the returned data from the server to a user
+     * @param $data
+     * @return User
+     */
     protected function mapJsonToUser($data)
     {
         return new User(
