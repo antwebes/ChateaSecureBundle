@@ -15,3 +15,6 @@ To get the diff between two versions, go to https://github.com/antwebes/ChateaSe
 * 0.1.3 (2015-04-22)
  * user locked cannot logued.
  	* Client/HttpAdapter/GuzzleHttpAdapter.php return $ex->getResponse()->getBody(true) to can parse and translate the error
+
+* 0.1.4 ( 2015-05-20)
+ * Include parameter "homepage_path" to redirect in loginAction when user is logged

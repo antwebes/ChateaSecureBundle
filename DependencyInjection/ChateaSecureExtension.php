@@ -29,6 +29,7 @@ class ChateaSecureExtension extends Extension
         $container->setParameter('chatea_secure.app_auth.client_id', $config['app_auth']['client_id']);
         $container->setParameter('chatea_secure.app_auth.secret', $config['app_auth']['secret']);
         $container->setParameter('chatea_secure.app_auth.enviroment', $config['app_auth']['enviroment']);
+        $container->setParameter('chatea_secure.homepage_path', $config['homepage_path']);
         if($config['api_endpoint'] == 'default'){
             $config['api_endpoint'] = "http://api.chatsfree.net";
         }

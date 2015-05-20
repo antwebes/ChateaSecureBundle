@@ -30,6 +30,7 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
                 ->scalarNode("api_endpoint")->defaultValue('default')->end()
+                ->scalarNode("homepage_path")->defaultValue('/')->end()
             ->end();
 
         // Here you should define the parameters that are allowed to

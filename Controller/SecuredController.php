@@ -16,7 +16,12 @@ class SecuredController extends Controller
     {
         $securityContext = $this->container->get('security.context');
         if ($securityContext->isGranted('IS_AUTHENTICATED_FULLY') && $this->get('security.context')->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
-            return $this->redirect("/");
+        	$homepage_path = $this->container->getParameter('chatea_secure.homepage_path');
+            if ($homepage_path == "/") {
+            	return $this->redirect($homepage_path);
+            }else{
+            	return $this->redirect($this->generateUrl($homepage_path));
+            }
         }
 
         if ($request->attributes->has(SecurityContext::AUTHENTICATION_ERROR)) {
