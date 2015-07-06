@@ -101,6 +101,7 @@ interface HttpAdapterInterface
      *  );
      */
     public function withClientCredentials();
+
     /**
      *  After the client has been authorized for access, they can use a refresh token to get a new access token.
      *
@@ -124,6 +125,30 @@ interface HttpAdapterInterface
      *  );
      */
     public function withRefreshToken($refresh_token);
+
+    /**
+     *  After the client has been authorized for access, they can use a access token to get a access token.
+     *
+     * @param string $access_token The client access token that you obtain in first request of credentials.
+     *
+     * @return array|string Associative array with client credentials | Message with error in json format
+     *
+     * @throws InvalidArgumentException This exception is thrown if any parameter has errors
+     *
+     * @throws AuthenticationException This exception is thrown if you do not credentials or you cannot use this method
+     *
+     * @example Get client credentials
+     *
+     *      $authenticationInstande->withAccessToken('access-token-demo');
+     *
+     *  array("access_token"    => access-token-demo,
+     *        "expires_in"      => 3600,
+     *        "token_type"      => bearer,
+     *        "scope"           => access_token,
+     *        "refresh_token"   => access-token-demo
+     *  );
+     */
+    public function withAccessToken($access_token);
 
     /**
      *  After the client has been authorized for access, they can use a refresh token to get a new access token.

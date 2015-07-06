@@ -46,3 +46,11 @@ if(!$request->getSession()->get('referer')){
             $request->getSession()->set('referer', $this->getRequest()->headers->get('referer'));
 }
 ```
+
+# Autologin
+
+Si se tiene el access token de un usuario se puede loguear al usuario a traves de cualquier URL añadiendo el parametro querystring ```autologin``` con el access token por ejemplo:
+
+```
+http://misuperchatsocial.com/usuarios?autologin?ACCESS_TOKEN
+```

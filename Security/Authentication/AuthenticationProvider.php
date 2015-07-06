@@ -1,7 +1,9 @@
 <?php
 namespace Ant\Bundle\ChateaSecureBundle\Security\Authentication;
 
+use Ant\Bundle\ChateaSecureBundle\Security\Token\AccessTokenToken;
 use Ant\Bundle\ChateaSecureBundle\Security\User\ChateaUserProviderInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
 use Symfony\Component\Security\Core\Authentication\Provider\UserAuthenticationProvider;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -44,7 +46,11 @@ class AuthenticationProvider extends UserAuthenticationProvider
             return $user;
         }
 
-        return $this->userProvider->loadUser($username,$token->getCredentials());
+        if($token instanceof AccessTokenToken){
+            return $this->userProvider->loadUserByAccessToken($token->getCredentials());
+        }else{
+            return $this->userProvider->loadUser($username,$token->getCredentials());
+        }
     }
 
     /**
@@ -59,5 +65,14 @@ class AuthenticationProvider extends UserAuthenticationProvider
     protected function checkAuthentication(UserInterface $user, UsernamePasswordToken $token)
     {
         //throw new AuthenticationException("This method is not supported yet.");
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function supports(TokenInterface $token)
+    {
+        return $token instanceof AccessTokenToken ||
+            parent::supports($token);
     }
 }

@@ -95,6 +95,27 @@ class UserProvider implements ChateaUserProviderInterface
     }
 
     /**
+     * Authenticate with access token
+     * @param $accessToken
+     * @return User
+     */
+    public function loadUserByAccessToken($accessToken)
+    {
+        if (empty($accessToken)) {
+            throw new \InvalidArgumentException($this->translator->trans('login.accesstoken_not_empty', array(), 'Login'));
+        }
+
+        try {
+            $data = $this->authentication->withAccessToken($accessToken);
+            return $this->mapJsonToUser($data);
+        } catch (ApiException $ae) {
+            throw new BadCredentialsException($this->translator->trans('login.service_down', array(), 'Login'));
+        } catch (AuthenticationException $e) {
+            throw new UsernameNotFoundException($this->translator->trans('login.incorrect_facebookid', array(), 'Login'),30,$e);
+        }
+    }
+
+    /**
      * Loads the user for the given username.
      *
      * This method must throw UsernameNotFoundException if the user is not

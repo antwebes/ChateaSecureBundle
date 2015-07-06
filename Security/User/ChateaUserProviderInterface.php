@@ -8,4 +8,6 @@ interface ChateaUserProviderInterface extends UserProviderInterface
     public function loadUser($username, $password);
 
     public function loadUserByFacebookId($facebookId);
+
+    public function loadUserByAccessToken($accessToken);
 }

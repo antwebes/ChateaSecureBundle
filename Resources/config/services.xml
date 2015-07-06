@@ -11,6 +11,7 @@
         <parameter key="antwebs_chateasecure.guzzle_client.class">Guzzle\Service\Client</parameter>
 
         <parameter key="antwewebs_revoke_access_on_logout_handler.class">Ant\Bundle\ChateaSecureBundle\Security\Http\Logout\RevokeAccessOnLogoutHandler</parameter>
+        <parameter key="ant_bundle.chateasecurebundle.security.firewall.autologinlistener.class">Ant\Bundle\ChateaSecureBundle\Security\Firewall\AutologinListener</parameter>
 
     </parameters>
 
@@ -41,6 +42,11 @@
         <service id="antwewebs_revoke_access_on_logout_handler" class="%antwewebs_revoke_access_on_logout_handler.class%">
           <argument type="service" id="security.context" />
           <argument type="service" id="chat_secure.adapter" />
+        </service>
+
+        <service class="%ant_bundle.chateasecurebundle.security.firewall.autologinlistener.class%" id="ant_bundle.chateasecurebundle.security.firewall.autologinlistener">
+            <argument id="security.context" type="service"/>
+            <argument id="security.authentication.manager" type="service"/>
         </service>
     </services>
 </container>

@@ -102,10 +102,41 @@
                 }
             }
         },
+        "withAccessToken":{
+            "httpMethod": "POST",
+            "uri": "oauth/v2/token",
+            "summary": "Auth client with access token",
+            "parameters": {
+                "grant_type":{
+                    "location": "json",
+                    "type": "string",
+                    "default": "access_token",
+                    "description": "the grant_type"
+                },
+                "client_id":{
+                    "location": "json",
+                    "type": "string",
+                    "required": true,
+                    "description": "the client_id"
+                },
+                "client_secret":{
+                    "location": "json",
+                    "type": "string",
+                    "required": true,
+                    "description": "the secret"
+                },
+                "access_token":{
+                    "location": "json",
+                    "type": "string",
+                    "required": true,
+                    "description": "the access_token"
+                }
+            }
+        },
         "withRefreshToken":{
             "httpMethod": "POST",
             "uri": "oauth/v2/token",
-            "summary": "Auth client with Authorization Code",
+            "summary": "Auth client with refresh token",
             "parameters": {
                 "grant_type":{
                     "location": "json",
