@@ -111,7 +111,7 @@ class UserProvider implements ChateaUserProviderInterface
         } catch (ApiException $ae) {
             throw new BadCredentialsException($this->translator->trans('login.service_down', array(), 'Login'));
         } catch (AuthenticationException $e) {
-            throw new UsernameNotFoundException($this->translator->trans('login.incorrect_facebookid', array(), 'Login'),30,$e);
+            throw new UsernameNotFoundException($this->translator->trans('login.incorrect_access_token', array(), 'Login'),30,$e);
         }
     }
 

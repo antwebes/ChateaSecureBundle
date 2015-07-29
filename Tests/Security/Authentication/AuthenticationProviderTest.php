@@ -2,6 +2,7 @@
 namespace Ant\Bundle\ChateaSecureBundle\Tests\Security\Authentication;
 
 use Ant\Bundle\ChateaSecureBundle\Security\Authentication\AuthenticationProvider;
+use Ant\Bundle\ChateaSecureBundle\Security\Token\AccessTokenToken;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\User;
@@ -51,5 +52,24 @@ class AuthenticationProviderTest extends \PHPUnit_Framework_TestCase
             ->will($this->throwException(new UsernameNotFoundException(sprintf('Incorrect username or password for %s ', 'usuario1'),30, new \Exception())));
 
         $tokenReturned = $this->authenticationProvider->authenticate($token);
+    }
+
+    public function testAuthenticateWithAccessToken()
+    {
+        $tokenString = 'anaccessToken';
+        $token = new AccessTokenToken($tokenString);
+
+        $this->userProvider
+            ->expects($this->once())
+            ->method('loadUserByAccessToken')
+            ->with($tokenString)
+            ->will($this->returnValue(new User('usuario1', 'clave1')));
+
+        $tokenReturned = $this->authenticationProvider->authenticate($token);
+
+        $user = $tokenReturned->getUser();
+        $this->assertEquals('usuario1', $user->getUsername());
+
+
     }
 }

@@ -194,6 +194,21 @@ class UserProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array('ROLE_A','ROLE_B','ROLE_C'),$user->getRoles());
 
     }
+
+    public function testLoadUserByAccessToken()
+    {
+        $responseToken = $this->getResponseToken();
+        $user = $this->getExpectedUser();
+
+        $this->authenticator
+            ->expects($this->once())
+            ->method('withAccessToken')
+            ->with('anaccesstoken')
+            ->will($this->returnValue($responseToken));
+
+        $this->assertEquals($user, $this->userProvider->loadUserByAccessToken('anaccesstoken'));
+    }
+
     private function getResponseToken()
     {
         return array(
