@@ -5,6 +5,7 @@ use Ant\Bundle\ChateaSecureBundle\Security\User\UserProvider;
 use Ant\Bundle\ChateaSecureBundle\Security\User\User;
 use Guzzle\Http\Exception\BadResponseException;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
+use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 
 class UserProviderInternal extends UserProvider
 {
@@ -23,37 +24,54 @@ class UserProviderTest extends \PHPUnit_Framework_TestCase
     private $authenticator;
     private $userProvider;
     private $userProviderInternal;
+    private $translation;
+
     public function setUp()
     {
         $this->authenticator = $this->getMockBuilder('Ant\Bundle\ChateaSecureBundle\Client\HttpAdapter\HttpAdapterInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->userProvider = new UserProvider($this->authenticator);
-        $this->userProviderInternal = new UserProviderInternal($this->authenticator);
+
+        $this->translation = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+
+        $this->userProvider = new UserProvider($this->authenticator, $this->translation);
+        $this->userProviderInternal = new UserProviderInternal($this->authenticator, $this->translation);
     }
 
     public function testLoadUserThrowsExceptionIfUsernameIsNotGiven()
     {
+        $this->translation
+            ->expects($this->once())
+            ->method('trans')
+            ->with('login.username_not_empty', array(), 'Login')
+            ->will($this->returnValue('The username cannot be empty.'));
+
         try {
             $this->userProvider->loadUser('', 'password');
-        } catch (\InvalidArgumentException $e) {
+        } catch (UsernameNotFoundException $e) {
             if($e->getMessage() == 'The username cannot be empty.')
                 return;
         }
 
-        $this->fail('Expected to raise an InvalidArgumentException');
+        $this->fail('Expected to raise an UsernameNotFoundException');
     }
 
     public function testLoadUserThrowsExceptionIfPasswordIsNotGiven()
     {
+        $this->translation
+            ->expects($this->once())
+            ->method('trans')
+            ->with('login.password_not_empty', array(), 'Login')
+            ->will($this->returnValue('The password cannot be empty.'));
+
         try {
             $this->userProvider->loadUser('username', '');
-        } catch (\InvalidArgumentException $e) {
+        } catch (UsernameNotFoundException $e) {
             if($e->getMessage() == 'The password cannot be empty.')
                 return;
         }
 
-        $this->fail('Expected to raise an InvalidArgumentException');
+        $this->fail('Expected to raise an UsernameNotFoundException');
     }
 
     public function testLoadUser()
@@ -102,13 +120,19 @@ class UserProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testLoadUserWhenApiIsDown()
     {
-        $exception = $this->getApiException();
+        $exception = $this->getApiException('Authentication service down');
 
         $this->authenticator
             ->expects($this->once())
             ->method('withUserCredentials')
             ->with('username', 'password')
             ->will($this->throwException($exception));
+
+        $this->translation
+            ->expects($this->once())
+            ->method('trans')
+            ->with('login.service_down', array(), 'Login')
+            ->will($this->returnValue('Authentication service down'));
 
         try{
             $this->userProvider->loadUser('username', 'password');
@@ -213,11 +237,19 @@ class UserProviderTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    private function getApiException()
+    private function getApiException($message = null)
     {
-        return $this->getMockBuilder('Ant\Bundle\ChateaSecureBundle\Client\HttpAdapter\Exception\ApiException')
+        $exception = $this->getMockBuilder('Ant\Bundle\ChateaSecureBundle\Client\HttpAdapter\Exception\ApiException')
             ->disableOriginalConstructor()
             ->getMock();
+
+        if($message !== null){
+            $exception->expects($this->any())
+                ->method('getMessage')
+                ->will($this->returnValue($message));
+        }
+
+        return $exception;
     }
 }
 
