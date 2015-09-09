@@ -12,7 +12,8 @@
 	"homepage" : "https://github.com/antwebes/ChateaSecureBundle",
 	"license" : "MIT",
 	"require" : {
-            "guzzle/guzzle" : "~3.7"
+        "guzzle/guzzle" : "~3.7",
+        "symfony/symfony" : "2.*"
 	},
     "require-dev": {
         "raulfraile/ladybug": "dev-master"
