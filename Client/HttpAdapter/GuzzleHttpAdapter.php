@@ -19,6 +19,8 @@ use Guzzle\Http\Exception\ClientErrorResponseException;
 use Guzzle\Http\Exception\ServerErrorResponseException;
 use Guzzle\Http\Exception\BadResponseException;
 use Guzzle\Http\Exception\CurlException;
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * Class GuzzleHttpAdapter
  * @package Ant\Chatea\SecureBundle\Client\HttpAdapter
@@ -37,6 +39,11 @@ class GuzzleHttpAdapter implements HttpAdapterInterface
      * @var string
      */
     private $secret;
+
+    /**
+     * @var Request
+     */
+    private $request;
 
     /**
      * @param string $base_url The Server end point
@@ -69,6 +76,11 @@ class GuzzleHttpAdapter implements HttpAdapterInterface
         $this->secret = $secret;
         $this->client->setBaseUrl($base_url);
         $this->client->setDescription(ServiceDescription::factory(__DIR__.'./../../Resources/config/api-services.json'));
+    }
+
+    public function setRequest(Request $request = null)
+    {
+        $this->request = $request;
     }
 
 
@@ -126,9 +138,13 @@ class GuzzleHttpAdapter implements HttpAdapterInterface
             throw new InvalidArgumentException("password must be a non-empty string");
         }
 
-        $command = $this->client->getCommand('withUserCredentials',
-            array('client_id'=>$this->getClientId(),'client_secret'=>$this->getSecret(),'username'=>$username,'password'=>$password)
-        );
+        $params = array('client_id'=>$this->getClientId(),'client_secret'=>$this->getSecret(),'username'=>$username,'password'=>$password);
+
+        if($this->request != null){
+            $params['userIP'] = $this->request->getClientIP();
+        }
+
+        $command = $this->client->getCommand('withUserCredentials', $params);
 
         try{
             return $command->execute();

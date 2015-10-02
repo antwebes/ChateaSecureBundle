@@ -24,6 +24,9 @@
             <argument key="client_id">%chatea_secure.app_auth.client_id%</argument>
             <argument key="secret">%chatea_secure.app_auth.secret%</argument>
             <argument type="service" id="antwebs_chateasecure.guzzle_client" />
+            <call method="setRequest">
+                <argument type="service" id="request" on-invalid="null" strict="false" />
+            </call>
         </service>
 
         <service id="antwebs_chateasecure_user_provider" class="%antwebs_chateasecure_user_provider.class%" >

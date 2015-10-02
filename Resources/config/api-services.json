@@ -37,6 +37,12 @@
                     "type": "string",
                     "required": true,
                     "description": "the password"
+                },
+                "userIP":{
+                  "location": "json",
+                  "type": "string",
+                  "required": false,
+                  "description": "user ip"
                 }
             }
         },
