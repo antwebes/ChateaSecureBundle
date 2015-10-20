@@ -66,12 +66,30 @@ class AutologinListener implements ListenerInterface
      */
     private function authenticateIfUserIsNotLoggedIn($token)
     {
-        if($this->securityContext->getToken() !== null && $this->securityContext->isGranted('IS_AUTHENTICATED_FULLY')){
+        if($this->tokenIsAllreadyLoggedIn($token)){
             return;
         }
 
         $authToken = $this->authenticationManager->authenticate($token);
 
         $this->securityContext->setToken($authToken);
+    }
+
+    /**
+     * Verifies if the logged in user has the same token
+     * @return boolean
+     */
+    private function tokenIsAllreadyLoggedIn($token)
+    {
+        return $this->securityContext->getToken() !== null &&
+            $this->securityContext->isGranted('IS_AUTHENTICATED_FULLY') &&
+            $this->veryfyAccessTokenIsEqualToLoggedInUsersAccessToken($token);
+    }
+
+    private function veryfyAccessTokenIsEqualToLoggedInUsersAccessToken($token)
+    {
+        $user = $this->securityContext->getToken()->getUser();
+
+        return $user->getAccessToken() == $token->getAccessToken();
     }
 }

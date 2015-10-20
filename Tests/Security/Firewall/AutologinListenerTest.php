@@ -89,12 +89,30 @@ class AutologinListenerTest extends \PHPUnit_Framework_TestCase
     {
         $validAccessToken ='validAccessToken';
         $request = new Request(array('autologin' => $validAccessToken));
-        $authToken = $this->getAuthToken();
+        $authToken = $this->getAuthToken($validAccessToken);
 
-        $this->mockCall($this->securityContext, 'getToken', $authToken, $this->once());
+        $this->mockCall($this->securityContext, 'getToken', $authToken, $this->any());
         $this->mockCall($this->securityContext, 'setToken', null, $this->never());
         $this->mockCall($this->securityContext, 'isGranted', true);
         $this->mockCall($this->authenticationManager, 'authenticate', null, $this->never());
+        $this->mockCall($this->event, 'getRequest', $request);
+        $this->mockCall($this->event, 'setResponse', null, $this->once());
+
+        $this->autologinListener->handle($this->event);
+
+        $this->assertFalse($request->query->has('autologin'));
+    }
+
+    public function testHandleWithAutologinAndAllreadyLogedinButDifferentToken()
+    {
+        $validAccessToken = 'validAccessToken';
+        $request = new Request(array('autologin' => $validAccessToken));
+        $authToken = $this->getAuthToken('oldValidAccessToken');
+
+        $this->mockCall($this->securityContext, 'getToken', $authToken, $this->any());
+        $this->mockCall($this->securityContext, 'setToken', null, $this->once());
+        $this->mockCall($this->securityContext, 'isGranted', true);
+        $this->mockCall($this->authenticationManager, 'authenticate', $authToken, $this->once(), $this->getAccessTokenAsserter($validAccessToken));
         $this->mockCall($this->event, 'getRequest', $request);
         $this->mockCall($this->event, 'setResponse', null, $this->once());
 
@@ -126,9 +144,9 @@ class AutologinListenerTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    private function getAuthToken()
+    private function getAuthToken($accessToken = '321IUKKL')
     {
-        $user = new User(2, 'username', '321IUKKL', '12HHIIK', true, 'password', 3600, array('role_1'));
+        $user = new User(2, 'username', $accessToken, '12HHIIK', true, 'password', 3600, array('role_1'));
         $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
 
         $token->expects($this->any())
