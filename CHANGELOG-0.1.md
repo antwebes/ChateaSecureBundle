@@ -22,3 +22,7 @@ To get the diff between two versions, go to https://github.com/antwebes/ChateaSe
 * 0.1.5 ( 2015-07-27)
  * Added autologin option in querystring to login with access token
  * If a user is allready login, we simply redirect without reauthenticate
+ 
+* 0.1.6 ( 2015-10-26)
+ * With autologin, if the current logged in user has a different access token the the passed in the autologin param, the user is logged
+ 
