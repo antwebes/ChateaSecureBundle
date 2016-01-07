@@ -15,15 +15,8 @@ chatea_secure:
         enviroment:                 %chatea_enviroment%			#the environment you want to execute
     api_endpoint:                   %api_endpoint%				#the endpoint url, generally https://api.chatsfree.net/
     homepage_path:                  homepage					# param to redirect in loginAction when user is logged, default value = "/"
-   
-```
 
-Making remember me work
-=======================
-
-In order to make the remember me able to work you have to change the remember me manager class of the security manager of symfony in the ```security.authentication.rememberme.services.simplehash.class``` like bellow:
-
-```
+#to make the remember me able to work
 parameters:
-    security.authentication.rememberme.services.simplehash.class: Ant\Bundle\ChateaSecureBundle\Security\Http\RememberMe\AccessTokenBasedRememberMeService
+    security.authentication.rememberme.services.simplehash.class: Ant\Bundle\ChateaSecureBundle\Security\Http\RememberMe\AccessTokenBasedRememberMeService   
 ```

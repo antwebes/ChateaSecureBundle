@@ -10,7 +10,9 @@ Documentation
 
 Documentation for this bundle is stored under `Resources/doc` in this repository.
 
-[Read the documentation for master][]
+[Read the documentation for master](Doc/index.md)
+[Read the documentation about remember me](Doc/remember-me.md)
+
 
 License
 -------
@@ -21,4 +23,4 @@ This bundle is under the MIT license. See the complete license in the bundle:
     Resources/meta/LICENSE
 ```
 
-[Read the documentation for master](Doc/index.md)
+

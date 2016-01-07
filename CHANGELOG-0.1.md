@@ -8,7 +8,6 @@ To get the diff for a specific change, go to https://github.com/antwebes/ChateaS
 To get the diff between two versions, go to https://github.com/antwebes/ChateaSecureBundle/compare/v0.1.0...v0.1.1
 
 * 0.1.2 (2015-04-10)
-
  * fix error when login with empty values in form login
  	* throw exception UsernameNotFoundException so symfony catch exception and show incorrect credentials
 
@@ -25,4 +24,7 @@ To get the diff between two versions, go to https://github.com/antwebes/ChateaSe
  
 * 0.1.6 ( 2015-10-26)
  * With autologin, if the current logged in user has a different access token the the passed in the autologin param, the user is logged
+
+* 0.1.7 (2016-01-??)
+ * Update documentation about remember-me
  
