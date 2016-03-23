@@ -27,4 +27,5 @@ To get the diff between two versions, go to https://github.com/antwebes/ChateaSe
 
 * 0.1.7 (2016-01-??)
  * Update documentation about remember-me
+ * Form login, "Nombre de usuario o email"
  

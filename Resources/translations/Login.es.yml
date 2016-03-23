@@ -1,5 +1,5 @@
 login.login: "Iniciar sesión"
-login.username: "Nombre de usuario"
+login.username: "Nombre de usuario o email"
 login.password: "Contraseña"
 login.submit: "Iniciar sesión"
 login.bad_credentials: "Usuario o contraseña incorrecto"
