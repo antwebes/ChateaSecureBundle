@@ -60,6 +60,7 @@ class SecuredController extends Controller
     {
         $translator = $this->get('translator');
         $translationMap = array(
+            'Bad credentials.' => 'login.bad_credentials',
             'Bad credentials' => 'login.bad_credentials'
         );
         $message = $error->getMessage();
