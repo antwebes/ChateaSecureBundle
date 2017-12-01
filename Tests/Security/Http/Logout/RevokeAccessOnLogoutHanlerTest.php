@@ -6,19 +6,19 @@ use Symfony\Component\Security\Http\Logout\LogoutHandlerInterface;
 
 class RevokeAccessOnLogoutHanlerTest extends \PHPUnit_Framework_TestCase
 {
-    private $securityContext;
+    private $tokenStorage;
     private $client;
     private $revokeAccesOnLogoutHanler;
     private $accessToken = 'aie84asd989asdf88asdf99asdf99';
 
     public function setUp()
     {
-        $this->securityContext = $this->getMockForAbstractClass('Symfony\Component\Security\Core\SecurityContextInterface');
+        $this->tokenStorage = $this->getMockForAbstractClass('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
         $this->client = $this->getMockBuilder('Ant\Bundle\ChateaSecureBundle\Client\HttpAdapter\HttpAdapterInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->revokeAccesOnLogoutHanler = new RevokeAccessOnLogoutHandler($this->securityContext, $this->client);
+        $this->revokeAccesOnLogoutHanler = new RevokeAccessOnLogoutHandler($this->tokenStorage, $this->client);
     }
 
     public function testImplementsLogoutHandlerInterface()
@@ -37,7 +37,7 @@ class RevokeAccessOnLogoutHanlerTest extends \PHPUnit_Framework_TestCase
         $this->configureSecurityToken($user);
         $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
         $response = $this->getMock('Symfony\Component\HttpFoundation\Response');
-        $token = $this->securityContext->getToken();
+        $token = $this->tokenStorage->getToken();
 
         $this->revokeAccesOnLogoutHanler->logout($request, $response, $token);
     }
@@ -106,7 +106,7 @@ class RevokeAccessOnLogoutHanlerTest extends \PHPUnit_Framework_TestCase
             ->method('isAuthenticated')
             ->will($this->returnValue($user != null));
 
-        $this->securityContext
+        $this->tokenStorage
             ->expects($this->any())
             ->method('getToken')
             ->will($this->returnValue($tokenMock));
@@ -114,7 +114,7 @@ class RevokeAccessOnLogoutHanlerTest extends \PHPUnit_Framework_TestCase
 
     private function configureSecurityContextWithNoToken()
     {
-        $this->securityContext
+        $this->tokenStorage
             ->expects($this->any())
             ->method('getToken')
             ->will($this->returnValue(null));
