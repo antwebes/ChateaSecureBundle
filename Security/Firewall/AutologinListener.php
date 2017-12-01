@@ -7,22 +7,29 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Core\SecurityContextInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Http\Firewall\ListenerInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class AutologinListener implements ListenerInterface
 {
-    protected $securityContext;
+    protected $tokenStorage;
     protected $authenticationManager;
+    protected $authorizationChecker;
 
     /**
-     * @param SecurityContextInterface $securityContext
+     * @param TokenStorageInterface $tokenStorage
      * @param AuthenticationManagerInterface $authenticationManager
      */
-    public function __construct(SecurityContextInterface $securityContext, AuthenticationManagerInterface $authenticationManager)
+    public function __construct(
+        TokenStorageInterface $tokenStorage,
+        AuthenticationManagerInterface $authenticationManager,
+        AuthorizationCheckerInterface $authorizationChecker
+    )
     {
-        $this->securityContext = $securityContext;
+        $this->tokenStorage = $tokenStorage;
         $this->authenticationManager = $authenticationManager;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -72,7 +79,7 @@ class AutologinListener implements ListenerInterface
 
         $authToken = $this->authenticationManager->authenticate($token);
 
-        $this->securityContext->setToken($authToken);
+        $this->tokenStorage->setToken($authToken);
     }
 
     /**
@@ -81,14 +88,14 @@ class AutologinListener implements ListenerInterface
      */
     private function tokenIsAllreadyLoggedIn($token)
     {
-        return $this->securityContext->getToken() !== null &&
-            $this->securityContext->isGranted('IS_AUTHENTICATED_FULLY') &&
+        return $this->tokenStorage->getToken() !== null &&
+            $this->authorizationChecker->isGranted('IS_AUTHENTICATED_FULLY') &&
             $this->veryfyAccessTokenIsEqualToLoggedInUsersAccessToken($token);
     }
 
     private function veryfyAccessTokenIsEqualToLoggedInUsersAccessToken($token)
     {
-        $user = $this->securityContext->getToken()->getUser();
+        $user = $this->tokenStorage->getToken()->getUser();
 
         return $user->getAccessToken() == $token->getAccessToken();
     }

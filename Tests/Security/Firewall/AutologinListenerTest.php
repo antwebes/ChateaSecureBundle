@@ -16,7 +16,7 @@ use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 class AutologinListenerTest extends \PHPUnit_Framework_TestCase
 {
     private $autologinListener;
-    private $securityContext;
+    private $tokenStorage;
     private $authenticationManager;
     private $event;
 
@@ -24,9 +24,10 @@ class AutologinListenerTest extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
 
-        $this->securityContext = $this->getMock('Symfony\Component\Security\Core\SecurityContextInterface');
+        $this->tokenStorage = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
         $this->authenticationManager = $this->getMock('Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface');
-        $this->autologinListener = new AutologinListener($this->securityContext, $this->authenticationManager);
+        $this->authorizationChecker = $this->getMock("Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface");
+        $this->autologinListener = new AutologinListener($this->tokenStorage, $this->authenticationManager, $this->authorizationChecker);
         $this->event = $this->getMockBuilder('Symfony\Component\HttpKernel\Event\GetResponseEvent')
             ->disableOriginalConstructor()
             ->setMethods(array('getRequest', 'setResponse'))
@@ -37,9 +38,9 @@ class AutologinListenerTest extends \PHPUnit_Framework_TestCase
     {
         $request = new Request();
 
-        $this->mockCall($this->securityContext, 'getToken', null, $this->never());
-        $this->mockCall($this->securityContext, 'setToken', null, $this->never());
-        $this->mockCall($this->securityContext, 'isGranted', null, $this->never());
+        $this->mockCall($this->tokenStorage, 'getToken', null, $this->never());
+        $this->mockCall($this->tokenStorage, 'setToken', null, $this->never());
+        $this->mockCall($this->authorizationChecker, 'isGranted', null, $this->never());
         $this->mockCall($this->authenticationManager, 'authenticate', null, $this->never());
         $this->mockCall($this->event, 'getRequest', $request);
         $this->mockCall($this->event, 'setResponse', null, $this->never());
@@ -47,15 +48,16 @@ class AutologinListenerTest extends \PHPUnit_Framework_TestCase
         $this->autologinListener->handle($this->event);
     }
 
+
     public function testHandleWithAutologin()
     {
         $validAccessToken ='validAccessToken';
         $request = new Request(array('autologin' => $validAccessToken));
         $authToken = $this->getAuthToken();
 
-        $this->mockCall($this->securityContext, 'getToken', null);
-        $this->mockCall($this->securityContext, 'setToken', null, $this->once(), $authToken);
-        $this->mockCall($this->securityContext, 'isGranted', null, $this->never());
+        $this->mockCall($this->tokenStorage, 'getToken', null);
+        $this->mockCall($this->tokenStorage, 'setToken', null, $this->once(), $authToken);
+        $this->mockCall($this->authorizationChecker, 'isGranted', null, $this->never());
         $this->mockCall($this->authenticationManager, 'authenticate', $authToken, $this->once(), $this->getAccessTokenAsserter($validAccessToken));
         $this->mockCall($this->event, 'getRequest', $request);
         $this->mockCall($this->event, 'setResponse', null, $this->once());
@@ -73,9 +75,9 @@ class AutologinListenerTest extends \PHPUnit_Framework_TestCase
 
         $exception = new BadCredentialsException();
 
-        $this->mockCall($this->securityContext, 'getToken', null);
-        $this->mockCall($this->securityContext, 'setToken', null, $this->never());
-        $this->mockCall($this->securityContext, 'isGranted', null, $this->never());
+        $this->mockCall($this->tokenStorage, 'getToken', null);
+        $this->mockCall($this->tokenStorage, 'setToken', null, $this->never());
+        $this->mockCall($this->authorizationChecker, 'isGranted', null, $this->never());
         $this->mockCall($this->authenticationManager, 'authenticate', $this->throwException($exception), $this->once(), $this->getAccessTokenAsserter($invalidAccessToken));
         $this->mockCall($this->event, 'getRequest', $request);
         $this->mockCall($this->event, 'setResponse', null, $this->once());
@@ -91,9 +93,9 @@ class AutologinListenerTest extends \PHPUnit_Framework_TestCase
         $request = new Request(array('autologin' => $validAccessToken));
         $authToken = $this->getAuthToken($validAccessToken);
 
-        $this->mockCall($this->securityContext, 'getToken', $authToken, $this->any());
-        $this->mockCall($this->securityContext, 'setToken', null, $this->never());
-        $this->mockCall($this->securityContext, 'isGranted', true);
+        $this->mockCall($this->tokenStorage, 'getToken', $authToken, $this->any());
+        $this->mockCall($this->tokenStorage, 'setToken', null, $this->never());
+        $this->mockCall($this->authorizationChecker, 'isGranted', true);
         $this->mockCall($this->authenticationManager, 'authenticate', null, $this->never());
         $this->mockCall($this->event, 'getRequest', $request);
         $this->mockCall($this->event, 'setResponse', null, $this->once());
@@ -109,9 +111,9 @@ class AutologinListenerTest extends \PHPUnit_Framework_TestCase
         $request = new Request(array('autologin' => $validAccessToken));
         $authToken = $this->getAuthToken('oldValidAccessToken');
 
-        $this->mockCall($this->securityContext, 'getToken', $authToken, $this->any());
-        $this->mockCall($this->securityContext, 'setToken', null, $this->once());
-        $this->mockCall($this->securityContext, 'isGranted', true);
+        $this->mockCall($this->tokenStorage, 'getToken', $authToken, $this->any());
+        $this->mockCall($this->tokenStorage, 'setToken', null, $this->once());
+        $this->mockCall($this->authorizationChecker, 'isGranted', true);
         $this->mockCall($this->authenticationManager, 'authenticate', $authToken, $this->once(), $this->getAccessTokenAsserter($validAccessToken));
         $this->mockCall($this->event, 'getRequest', $request);
         $this->mockCall($this->event, 'setResponse', null, $this->once());

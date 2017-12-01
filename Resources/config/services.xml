@@ -43,13 +43,14 @@
         </service>
 
         <service id="antwewebs_revoke_access_on_logout_handler" class="%antwewebs_revoke_access_on_logout_handler.class%">
-          <argument type="service" id="security.context" />
+          <argument type="service" id="security.token_storage" />
           <argument type="service" id="chat_secure.adapter" />
         </service>
 
         <service class="%ant_bundle.chateasecurebundle.security.firewall.autologinlistener.class%" id="ant_bundle.chateasecurebundle.security.firewall.autologinlistener">
-            <argument id="security.context" type="service"/>
+            <argument id="security.token_storage" type="service"/>
             <argument id="security.authentication.manager" type="service"/>
+            <argument id="security.authorization_checker" type="service"/>
         </service>
     </services>
 </container>
